@@ -48,18 +48,6 @@ async def create_answer_controller(data: CreateAnswer):
     return await TopicService.create_answer_service(data=data)
 
 
-# --- Удаление влпроса --- #
-@router.delete('/delete_question')
-async def delete_question_controller(question_id: int):
-    return await TopicService.delete_question_service(question_id=question_id)
-
-
-# --- Удаление ответа --- #
-@router.delete('/delete_answer')
-async def delete_answer_controller(question_id: int):
-    return await TopicService.delete_answer_service(question_id=question_id)
-
-
 # --- Обновление количества голосов за вопрос --- #
 @router.put('/update_question_votes')
 async def update_question_votes_controller(data: UpdateVotes):
@@ -82,3 +70,15 @@ async def update_question_status_controller(data: UpdateStatus):
 @router.put('/update_answers_status')
 async def update_answers_status_controller(data: UpdateStatus):
     return await TopicService.update_answers_status_service(data=data)
+
+
+# --- Удаление вопроса --- #
+@router.delete('/delete_question')
+async def delete_question_controller(question_id: int):
+    return await TopicService.delete_question_service(question_id=question_id)
+
+
+# --- Удаление ответа --- #
+@router.delete('/delete_answer')
+async def delete_answer_controller(question_id: int):
+    return await TopicService.delete_answer_service(question_id=question_id)

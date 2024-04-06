@@ -51,24 +51,6 @@ class TopicService:
         )
 
         return answer
-    
-    @staticmethod  # Удаление вопроса
-    async def delete_question_service(question_id: int):
-        response = await TopicQuections.filter(id=question_id).get_or_none()
-
-        if response:
-            await response.delete()
-            await response.save()
-            return {"message": "success"}
-    
-    @staticmethod  # Удаление ответа
-    async def delete_answer_service(question_id: int):
-        response = await TopicAnswers.filter(question_id=question_id).get_or_none()
-
-        if response:
-            await response.delete()
-            await response.save()
-            return {"message": "success"}
 
     @staticmethod  # Обновление количества голосов за вопрос
     async def update_question_votes_service(data: UpdateVotes):
@@ -126,3 +108,21 @@ class TopicService:
                 user_statistic_response.answers += 1
                 user_statistic_response.points += random.randint(1, 3)
                 await user_statistic_response.save()
+
+    @staticmethod  # Удаление вопроса
+    async def delete_question_service(question_id: int):
+        response = await TopicQuections.filter(id=question_id).get_or_none()
+
+        if response:
+            await response.delete()
+            await response.save()
+            return {"message": "success"}
+    
+    @staticmethod  # Удаление ответа
+    async def delete_answer_service(question_id: int):
+        response = await TopicAnswers.filter(question_id=question_id).get_or_none()
+
+        if response:
+            await response.delete()
+            await response.save()
+            return {"message": "success"}
