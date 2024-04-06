@@ -21,10 +21,7 @@ dp = Dispatcher(storage=storage)
 
 async def main():
     bot.config = config
-    bot.permanent_ids = [872278858, 767922691]
-    bot.log_channel = config["LOGS"]["log_channel"]
-    bot.dm_log_channel = config["LOGS"]["dm_log_channel"]
-    bot.logs_channels = [bot.log_channel, bot.dm_log_channel]
+    bot.permanent_ids = [872278858]
 
     # Подключение модулей
     logger.info("Loading modules...")

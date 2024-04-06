@@ -33,15 +33,12 @@ thank_you_animation_messages = [
 
 @router.message(F.sticker)
 async def message_with_sticker(message: Message):
-    if int(message.chat.id) not in map(int, message.bot.logs_channels):
-        await message.answer(text=random.choice(thank_you_sticker_messages))
+    await message.answer(text=random.choice(thank_you_sticker_messages))
 
 @router.message(F.animation)
 async def message_with_gif(message: Message):
-    if int(message.chat.id) not in map(int, message.bot.logs_channels):
-        await message.answer(text=random.choice(thank_you_animation_messages))
+    await message.answer(text=random.choice(thank_you_animation_messages))
 
 @router.message(F.text)
 async def message_with_text(message: Message):
-    if int(message.chat.id) not in map(int, message.bot.logs_channels):
-        await message.answer(text="Нет такого варианта!")
+    await message.answer(text="Нет такого варианта!")
