@@ -31,7 +31,7 @@ async def get_all_user_answers_controller(user_id: int):
 
 
 # --- Получение всех отвтов на вопрос --- #
-@router.get('/get_all_answers')
+@router.get('/get_all_question_answers')
 async def get_all_question_answers_controller(question_id: int):
     return await TopicService.get_all_question_answers_service(question_id=question_id)
 
@@ -80,5 +80,5 @@ async def delete_question_controller(question_id: int):
 
 # --- Удаление ответа --- #
 @router.delete('/delete_answer')
-async def delete_answer_controller(question_id: int):
-    return await TopicService.delete_answer_service(question_id=question_id)
+async def delete_answer_controller(answer_id: int):
+    return await TopicService.delete_answer_service(answer_id=answer_id)
