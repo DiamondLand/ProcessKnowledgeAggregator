@@ -30,84 +30,102 @@ class TopicService:
 
     @staticmethod  # Создание вопроса
     async def create_question_service(data: CreateQuestion):
-        question, _created = await TopicQuections.update_or_create(
-            user_id=data.user_id,
-            defaults={
-                'tag': data.tag,
-                'question': data.question
-            }
-        )
+        user = await User.get_or_none(user_id=data.user_id)
 
-        return question
+        if user:
+            question, _created = await TopicQuections.update_or_create(
+                user_id=data.user_id,
+                defaults={
+                    'tag': data.tag,
+                    'question': data.question
+                }
+            )
+
+            return question
 
     @staticmethod  # Создание ответа
     async def create_answer_service(data: CreateAnswer):
-        answer, _created = await TopicAnswers.update_or_create(
-            user_id=data.user_id,
-            question_id=data.question_id,
-            defaults={
-                'answer': data.answer
-            }
-        )
+        user = await User.get_or_none(user_id=data.user_id)
 
-        return answer
+        if user:
+            answer, _created = await TopicAnswers.update_or_create(
+                user_id=data.user_id,
+                question_id=data.question_id,
+                defaults={
+                    'answer': data.answer
+                }
+            )
+
+            return answer
 
     @staticmethod  # Обновление количества голосов за вопрос
     async def update_question_votes_service(data: UpdateVotes):
-        response = await TopicQuections.get_or_none(id=data.part_id)
+        user = await User.get_or_none(user_id=data.user_id)
 
-        if response:
-            response.votes += data.number
-            await response.save()
+        if user:
+            response = await TopicQuections.get_or_none(id=data.part_id)
 
-            user_statistic_response = await UserStatistic.get_or_none(user_id=data.user_id)
-            # ! Человек может зафармить поинты проставляя голос и убирая его
-            if user_statistic_response and data.number > 0:
-                user_statistic_response.points += random.randint(1, 3)
-                await user_statistic_response.save()
+            if response:
+                response.votes += data.number
+                await response.save()
+
+                user_statistic_response = await UserStatistic.get_or_none(user_id=data.user_id)
+                # ! Человек может зафармить поинты проставляя голос и убирая его
+                if user_statistic_response and data.number > 0:
+                    user_statistic_response.points += random.randint(1, 3)
+                    await user_statistic_response.save()
 
     @staticmethod  # Обновление оличества голосов за ответ
     async def update_answers_votes_service(data: UpdateVotes):
-        response = await TopicAnswers.get_or_none(question_id=data.part_id)
+        user = await User.get_or_none(user_id=data.user_id)
 
-        if response:
-            response.votes += data.number
-            await response.save()
+        if user:
+            response = await TopicAnswers.get_or_none(question_id=data.part_id)
 
-        user_statistic_response = await UserStatistic.get_or_none(user_id=data.user_id)
+            if response:
+                response.votes += data.number
+                await response.save()
 
-        # ! Человек может зафармить поинты проставляя голос и убирая его
-        if user_statistic_response and data.number > 0:
-            user_statistic_response.points += 1
-            await user_statistic_response.save()
+            user_statistic_response = await UserStatistic.get_or_none(user_id=data.user_id)
+
+            # ! Человек может зафармить поинты проставляя голос и убирая его
+            if user_statistic_response and data.number > 0:
+                user_statistic_response.points += 1
+                await user_statistic_response.save()
 
     @staticmethod  # Обновление статуса вопроса
     async def update_question_status_service(data: UpdateStatus):
-        response = await TopicQuections.get_or_none(id=data.part_id)
+        user = await User.get_or_none(user_id=data.user_id)
 
-        if response:
-            response.status = data.status
-            await response.save()
+        if user:
+            response = await TopicQuections.get_or_none(id=data.part_id)
 
-            user_statistic_response = await UserStatistic.get_or_none(user_id=data.user_id)
-            if user_statistic_response and data.number > 0:
-                user_statistic_response.questions += 1
-                user_statistic_response.points += random.randint(1, 5)
-                await user_statistic_response.save()
+            if response:
+                response.status = data.status
+                await response.save()
+
+                user_statistic_response = await UserStatistic.get_or_none(user_id=data.user_id)
+                if user_statistic_response and data.number > 0:
+                    user_statistic_response.questions += 1
+                    user_statistic_response.points += random.randint(1, 5)
+                    await user_statistic_response.save()
 
     @staticmethod  # Обновление статуса ответа
     async def update_answers_status_service(data: UpdateStatus):
-        response = await TopicAnswers.get_or_none(question_id=data.part_id)
+        user = await User.get_or_none(user_id=data.user_id)
 
-        if response:
-            response.status = data.status
-            await response.save()
+        if user:
+            response = await TopicAnswers.get_or_none(question_id=data.part_id)
 
-            user_statistic_response = await UserStatistic.get_or_none(user_id=data.user_id)
-            if user_statistic_response and data.number > 0:
-                user_statistic_response.answers += 1
-                user_statistic_response.points += random.randint(1, 3)
-                await user_statistic_response.save()
+            if response:
+                response.status = data.status
+                await response.save()
+
+                user_statistic_response = await UserStatistic.get_or_none(user_id=data.user_id)
+                if user_statistic_response and data.number > 0:
+                    user_statistic_response.answers += 1
+                    user_statistic_response.points += random.randint(1, 3)
+                    await user_statistic_response.save()
 
     @staticmethod  # Удаление вопроса
     async def delete_question_service(question_id: int):
