@@ -9,6 +9,7 @@ from loguru import logger
 
 from events import errors_handler, profile_events
 from handlers.commands import commands_handler
+from handlers.register import register
 from handlers import different_types
 
 config = configparser.ConfigParser()
@@ -21,7 +22,7 @@ dp = Dispatcher(storage=storage)
 
 async def main():
     bot.config = config
-    bot.permanent_ids = [872278858]
+    bot.permanent_ids = [8722788581]
 
     # Подключение модулей
     logger.info("Loading modules...")
@@ -33,6 +34,7 @@ async def main():
         # Пользовательское
         profile_events.router,
         commands_handler.router,
+        register.router,
 
         # Должно быть в конце для заполения форм
         different_types.router

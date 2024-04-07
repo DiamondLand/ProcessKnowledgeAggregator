@@ -3,7 +3,7 @@ import pydantic
 
 class CreateUserScheme(pydantic.BaseModel):
     user_id: int
-    phone: str
+    contacts: str
     login: str
     password: str
 

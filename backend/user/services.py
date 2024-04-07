@@ -22,14 +22,14 @@ class UserService:
 
     @staticmethod  # Регистрация пользователя
     async def create_user_service(data: CreateUserScheme):
-        check_phone_response = await User.filter(phone=data.phone).exclude(user_id=data.user_id).get_or_none()
+        check_contacts_response = await User.filter(contacts=data.contacts).exclude(user_id=data.user_id).get_or_none()
         check_login_response = await User.filter(login=data.login).exclude(user_id=data.user_id).get_or_none()
 
-        if check_phone_response is None and check_login_response is None:
+        if check_contacts_response is None and check_login_response is None:
             user, created = await User.update_or_create(
                 user_id=data.user_id,
                 defaults={
-                    'phone': data.phone,
+                    'contacts': data.contacts,
                     'login': data.login,
                     'password': data.password
                 }

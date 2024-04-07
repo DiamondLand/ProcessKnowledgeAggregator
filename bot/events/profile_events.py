@@ -6,5 +6,3 @@ from aiogram.fsm.context import FSMContext
 from aiogram.exceptions import TelegramBadRequest
 
 router = Router()
-
-

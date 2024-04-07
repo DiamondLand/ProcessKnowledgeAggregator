@@ -3,6 +3,8 @@ from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command
 
+from elements.keyboards.keyboards_utilits import recreate_profile_kb
+
 router = Router()
 
 
@@ -13,7 +15,7 @@ async def cmd_start(message: Message, state: FSMContext):
     if await state.get_state() is not None:
         await state.clear()
 
-    await message.answer(text=f"...")
+    await message.answer(text=f"...", reply_markup=recreate_profile_kb())
 
 
 # --- Информационная панель --- #
