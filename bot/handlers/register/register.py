@@ -97,11 +97,11 @@ async def create_contacts(message: Message, state: FSMContext):
     await state.update_data(data)
 
     await message.answer(
-        text="✨💬",
+        text="Подытожим...",
         reply_markup=recreate_profile_kb()
     )
     await message.answer(
-        text=f"<b>Подытожим:</b>\n\
+        text=f"\
         \n✅ Логин: <code>{data.get('login', '')}</code>\
         \n✅ Пароль: <code>{data.get('password', '')}</code>\
         \n✅ Способ связи: <code>{data.get('contacts', '')}</code>\

@@ -3,7 +3,7 @@ from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command
 
-from elements.keyboards.keyboards_utilits import recreate_profile_kb
+from elements.keyboards.keyboards_profile import recreate_profile_kb
 
 router = Router()
 
