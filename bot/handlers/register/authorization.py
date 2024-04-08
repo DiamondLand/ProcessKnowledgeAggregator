@@ -42,7 +42,7 @@ async def create_profile_btn(message: Message, state: FSMContext):
 
 # --- Стадия 1. Логин -> пароль --- #
 @router.message(Authorizationrofile.authorization_login)
-async def create_login(message: Message, state: FSMContext):
+async def authorization_login(message: Message, state: FSMContext):
     data = await state.get_data()
 
     cleaned_text = re.sub(r'[<>]', '', message.text[:30]) # Убираем символы выделения
@@ -59,7 +59,7 @@ async def create_login(message: Message, state: FSMContext):
 
 # --- Стадия 2. Пароль -> финиш --- #
 @router.message(Authorizationrofile.authorization_password)
-async def create_password(message: Message, state: FSMContext):
+async def authorization_password(message: Message, state: FSMContext):
     data = await state.get_data()
 
     cleaned_text = re.sub(r'[<>]', '', message.text[:50]) # Убираем символы выделения

@@ -7,11 +7,11 @@ from .schemas import CreateUserScheme, AddToBlackListScheme, ChangeStatusScheme
 class UserService:
 
     @staticmethod  # Получение пользователя
-    async def get_user_service(login: str):
-        user = await User.get_or_none(login=login)
-        statistic_entry = await UserStatistic.get_or_none(login=login)
-        privileges_entry = await UserPrivileges.get_or_none(login=login)
-        blacklist_entry = await BlackList.get_or_none(login=login)
+    async def get_user_service(user_id: int):
+        user = await User.get_or_none(user_id=user_id)
+        statistic_entry = await UserStatistic.get_or_none(login=user.login if user else None)
+        privileges_entry = await UserPrivileges.get_or_none(login=user.login if user else None)
+        blacklist_entry = await BlackList.get_or_none(login=user.login if user else None)
         return {
             "user_info": user,
             "user_statistic": statistic_entry,
@@ -27,6 +27,7 @@ class UserService:
             user, created = await User.update_or_create(
                 login=data.login,
                 defaults={
+                    'user_id': data.user_id,
                     'contacts': data.contacts,
                     'password': data.password
                 }

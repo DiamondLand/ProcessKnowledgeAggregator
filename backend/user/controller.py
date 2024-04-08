@@ -9,8 +9,8 @@ router = APIRouter()
 
 # --- Получение пользователя --- #
 @router.get('/get_user')
-async def get_user_controller(login: str):
-    return await UserService.get_user_service(login=login)
+async def get_user_controller(user_id: int):
+    return await UserService.get_user_service(user_id=user_id)
 
 
 # --- Регистрация пользователя --- #
