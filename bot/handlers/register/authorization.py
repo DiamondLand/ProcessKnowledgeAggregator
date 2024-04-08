@@ -15,6 +15,8 @@ from elements.keyboards.keyboards_profile import reg_or_auth_kb
 from elements.keyboards.text_on_kb import auth_profile
 from elements.answers import server_error
 
+from ..commands.commands_handler import cmd_start
+
 from events.states_group import Authorizationrofile
 
 router = Router()
@@ -67,7 +69,7 @@ async def authorization_password(message: Message, state: FSMContext):
     )
     # * .json() -> [{'user_info'}: ..., {'user_statistic'}: ..., {'user_privileges'}: ..., {'blacklist_info'}: ...]
     if get_user_response.status_code == 200:
-        if get_user_response.json():
+        if get_user_response.json()['user_info']:
             # Используем префаб проверки на блокировку
             ban_status = await prefab_account_blacklist(
                 msg=message,
@@ -80,11 +82,6 @@ async def authorization_password(message: Message, state: FSMContext):
 
             # Если префаб ничего не вернул (препядствий для пользователя нет)
             if ban_status[1] is None:
-                await message.answer(
-                    text=f"🕠 Секундочку...",
-                    reply_markup=ReplyKeyboardRemove()
-                )
-
                 # Авторизируем пользователя
                 async with httpx.AsyncClient() as client:
                     create_user_response = await client.put(message.bot.config["SETTINGS"]["backend_url"] + 'authorization_user', json={
@@ -95,8 +92,8 @@ async def authorization_password(message: Message, state: FSMContext):
 
                 if create_user_response.status_code == 200:
                     await state.clear()
-                    await message.answer(text="Добро пожаловать!")
-
+                    
+                    await cmd_start(message=message, state=state)
                     await delete_redis_keys(msg=message, user_id=message.from_user.id)
                 else:
                     await message.answer(text=server_error)

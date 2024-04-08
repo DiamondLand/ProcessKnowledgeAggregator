@@ -18,7 +18,7 @@ async def cmd_start(message: Message, state: FSMContext, get_user_response: dict
     if await state.get_state() is not None:
         await state.clear()
 
-    await message.answer(text=f"<b>Добро пожаловать, @{message.from_user.username}!</b>\n\nВы вошли под <code>{get_user_response['login']}</code>!", reply_markup=profile_kb())
+    await message.answer(text=f"<b>Добро пожаловать 🔎!</b>\n\nВы вошли под <code>{get_user_response['login']}</code>!", reply_markup=profile_kb())
 
 
 # --- Информационная панель --- #
