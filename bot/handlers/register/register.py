@@ -35,7 +35,7 @@ async def create_profile_btn(message: Message, state: FSMContext):
         reply_markup=form_cancel_kb()
     )
     await message.answer(
-        text=f"@{message.from_user.username}, придумай логин до <b>40-а</b> символов:"
+        text=f"@{message.from_user.username}, придумай имя аккаунта (логин) до <b>40-а</b> символов:"
     )
     await state.set_state(CreateProfile.create_login)
 
@@ -79,7 +79,7 @@ async def create_password(message: Message, state: FSMContext):
 async def create_contacts(message: Message, state: FSMContext):
     data = await state.get_data()
 
-    if message.text and any(char.isdigit() for char in message.text):
+    if message.text and (message.text[0].isdigit() or message.text.startswith('+')):
         phone_number = re.sub(r'\D', '', message.text) # Оставить только цифры
         if len(phone_number) == 11:
             contact = f"+7 ({phone_number[1:4]}) {phone_number[4:7]}-{phone_number[7:9]}-{phone_number[9:]}"
@@ -102,7 +102,7 @@ async def create_contacts(message: Message, state: FSMContext):
     )
     await message.answer(
         text=f"\
-        \n✅ Логин: <code>{data.get('login', '')}</code>\
+        \n✅ Имя аккаунта (логин): <code>{data.get('login', '')}</code>\
         \n✅ Пароль: <code>{data.get('password', '')}</code>\
         \n✅ Способ связи: <code>{data.get('contacts', '')}</code>\
         \n\n<i>Не забудьте эти данные, они понадобятся для входа.</i>", 
