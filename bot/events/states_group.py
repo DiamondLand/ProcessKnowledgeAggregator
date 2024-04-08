@@ -15,6 +15,22 @@ class Authorizationrofile(StatesGroup):
     authorization_password = State()
 
 
+# --- StatesGroup просмотра лент вопросов ---
+class Searching(StatesGroup):
+    tape_questions = State()
+    tape_answers = State()
+
+    create_question = State()
+    create_answer = State()
+
+
+# --- StatesGroup изменения вопросов/ответов  ---
+class EditQuestionOrAnswer(StatesGroup):
+    edit_question = State()
+    edit_question_tag = State()
+    edit_answer = State()
+
+
 # --- StatesGroup для ввода каптчи ---
 class Captcha(StatesGroup):
     captcha_input = State()

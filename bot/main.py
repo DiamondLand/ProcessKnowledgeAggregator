@@ -10,6 +10,7 @@ from loguru import logger
 from events import errors_handler, profile_events
 from handlers.commands import commands_handler
 from handlers.register import register, authorization
+from handlers.topics import tape_searching
 from handlers import different_types
 
 config = configparser.ConfigParser()
@@ -36,6 +37,7 @@ async def main():
         commands_handler.router,
         register.router,
         authorization.router,
+        tape_searching.router,
 
         # Должно быть в конце для заполения форм
         different_types.router

@@ -14,28 +14,28 @@ class TopicService:
 
     @staticmethod  # Получение всех вопросов
     async def get_all_questions_service():
-        return await TopicQuections.filter().all()
+        return await TopicQuections.filter().order_by('-votes').all()
 
     @staticmethod  # Получение всех вопросов пользователя
     async def get_all_user_questions_service(login: str):
         user = await User.get_or_none(login=login)
 
         if user:
-            return await TopicQuections.filter(login=user).all()
+            return await TopicQuections.filter(login=user).order_by('-votes').all()
 
     @staticmethod  # Получение всех ответов пользователя
     async def get_all_user_answers_service(login: str):
         user = await User.get_or_none(login=login)
 
         if user:
-            return await TopicAnswers.filter(login=user).all()
+            return await TopicAnswers.filter(login=user).order_by('-votes').all()
 
     @staticmethod  # Получение всех ответов на вопрос
     async def get_all_question_answers_service(question_id: int):
         question = await TopicQuections.get_or_none(id=question_id)
 
         if question:
-            return await TopicAnswers.filter(question=question).all()
+            return await TopicAnswers.filter(question=question).order_by('-votes').all()
 
     @staticmethod  # Создание вопроса
     async def create_question_service(data: CreateQuestion):
