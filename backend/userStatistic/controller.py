@@ -8,8 +8,8 @@ router = APIRouter()
 
 # --- Получение статистики --- #
 @router.get('/get_statistic')
-async def get_statistic_controller(user_id: int):
-    return await StatusService.get_statistic_service(user_id=user_id)
+async def get_statistic_controller(login: str):
+    return await StatusService.get_statistic_service(login=login)
 
 
 # --- Обновление количества поинтов --- #

@@ -6,9 +6,9 @@ from tortoise.models import Model
 class TopicQuections(Model):
     id = fields.IntField(pk=True)
 
-    user = fields.ManyToManyField(
+    login = fields.ManyToManyField(
         'models.User', related_name='user_question', 
-        to_field='user_id'
+        to_field='login'
     )
     tag = fields.CharField(max_length=300)
     question = fields.TextField()
@@ -27,9 +27,9 @@ class TopicAnswers(Model):
         'models.TopicQuections', 
         related_name='question_to_answer', on_delete='CASCADE'
     )
-    user = fields.ManyToManyField(
+    login = fields.ManyToManyField(
         'models.User', 
-        related_name='user_answers', to_field='user_id'
+        related_name='user_answers', to_field='login'
     )
     answer = fields.TextField()
 

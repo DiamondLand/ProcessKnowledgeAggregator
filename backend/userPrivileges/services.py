@@ -11,10 +11,10 @@ class StatusService:
 
     @staticmethod  # Изменение статуса админа
     async def update_admin_status_service(data: UpdateStatusScheme):
-        user = await User.get_or_none(user_id=data.user_id)
+        user = await User.get_or_none(login=data.login)
 
         if user:
-            response = await UserPrivileges.get_or_none(user=data.user_id)
+            response = await UserPrivileges.get_or_none(login=data.login)
 
             if response:
                 response.is_admin = data.status

@@ -1,21 +1,24 @@
 from aiogram import Router
-from aiogram.types import Message, ReplyKeyboardRemove
+from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command
 
-from elements.keyboards.keyboards_profile import recreate_profile_kb
+from decorators.profile_decorator import check_authorized
+
+from elements.keyboards.keyboards_profile import profile_kb
 
 router = Router()
 
 
 # --- Главная панель --- #
 @router.message(Command("start", "profile"))
+@check_authorized
 async def cmd_start(message: Message, state: FSMContext):
     # Если стадия существует, выходим из неё
     if await state.get_state() is not None:
         await state.clear()
 
-    await message.answer(text=f"...", reply_markup=recreate_profile_kb())
+    await message.answer(text=f"Добро пожаловать, @{message.from_user.username}!", reply_markup=profile_kb())
 
 
 # --- Информационная панель --- #

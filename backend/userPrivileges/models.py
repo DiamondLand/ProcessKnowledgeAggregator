@@ -6,8 +6,8 @@ from tortoise.models import Model
 class UserPrivileges(Model):
     id = fields.IntField(pk=True)
 
-    user = fields.OneToOneField(
-        'models.User', to_field='user_id', on_delete='CASCADE'
+    login = fields.OneToOneField(
+        'models.User', to_field='login', on_delete='CASCADE'
     )
 
     is_admin = fields.BooleanField(default=False)

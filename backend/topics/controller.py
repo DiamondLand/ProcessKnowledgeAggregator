@@ -20,14 +20,14 @@ async def get_all_questions_controller():
 
 # --- Получение всех вопросов пользователя --- #
 @router.get('/get_all_user_questions')
-async def get_all_user_questions_controller(user_id: int):
-    return await TopicService.get_all_user_questions_service(user_id=user_id)
+async def get_all_user_questions_controller(login: str):
+    return await TopicService.get_all_user_questions_service(login=login)
 
 
 # --- Получение всех ответов пользователя --- #
 @router.get('/get_all_user_answers')
-async def get_all_user_answers_controller(user_id: int):
-    return await TopicService.get_all_user_answers_service(user_id=user_id)
+async def get_all_user_answers_controller(login: str):
+    return await TopicService.get_all_user_answers_service(login=login)
 
 
 # --- Получение всех отвтов на вопрос --- #

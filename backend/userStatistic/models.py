@@ -6,8 +6,8 @@ from tortoise.models import Model
 class UserStatistic(Model):
     id = fields.IntField(pk=True)
 
-    user = fields.OneToOneField(
-        'models.User', to_field='user_id', on_delete='CASCADE'
+    login = fields.OneToOneField(
+        'models.User', to_field='login', on_delete='CASCADE'
     )
 
     points = fields.IntField(default=0)

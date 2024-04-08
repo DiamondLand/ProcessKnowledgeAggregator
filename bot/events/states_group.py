@@ -9,6 +9,12 @@ class CreateProfile(StatesGroup):
     create_contacts = State()
 
 
+# --- StatesGroup для авторизации аккаунта ---
+class Authorizationrofile(StatesGroup):
+    authorization_login = State()
+    authorization_password = State()
+
+
 # --- StatesGroup для ввода каптчи ---
 class Captcha(StatesGroup):
     captcha_input = State()

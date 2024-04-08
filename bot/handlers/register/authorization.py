@@ -14,16 +14,16 @@ from elements.inline.inline_profile import finish_registration_btns
 from elements.keyboards.keyboards_utilits import form_cancel_kb
 from elements.keyboards.keyboards_profile import recreate_profile_kb
 
-from elements.keyboards.text_on_kb import recreate_profile, reg_profile
+from elements.keyboards.text_on_kb import auth_profile
 from elements.answers import server_error, no_state
 
-from events.states_group import CreateProfile
+from events.states_group import Authorizationrofile
 
 router = Router()
 
 
-# --- Панель регистрации/пересоздания профиля -> логин ---
-@router.message((F.text == reg_profile) | (F.text == recreate_profile))
+# --- Панель авторизации профиля -> логин ---
+@router.message(F.text == auth_profile)
 async def create_profile_btn(message: Message, state: FSMContext):
     # Если стадия существует, выходим из неё
     if await state.get_state() is not None:
@@ -37,11 +37,11 @@ async def create_profile_btn(message: Message, state: FSMContext):
     await message.answer(
         text=f"@{message.from_user.username}, придумай логин до <b>40-а</b> символов:"
     )
-    await state.set_state(CreateProfile.create_login)
+    await state.set_state(Authorizationrofile.authorization_login)
 
 
 # --- Стадия 1. Логин -> пароль --- #
-@router.message(CreateProfile.create_login)
+@router.message(Authorizationrofile.authorization_login)
 async def create_login(message: Message, state: FSMContext):
     data = await state.get_data()
 
@@ -54,11 +54,11 @@ async def create_login(message: Message, state: FSMContext):
         text=f"<b>Запомнил - <code>{cleaned_text}</code> ✨!</b>\
         \nТеперь потребуется пароль:",
     )
-    await state.set_state(CreateProfile.create_password)
+    await state.set_state(Authorizationrofile.authorization_password)
 
 
-# --- Стадия 2. Пароль -> Телефон --- #
-@router.message(CreateProfile.create_password)
+# --- Стадия 2. Пароль -> финиш --- #
+@router.message(Authorizationrofile.authorization_password)
 async def create_password(message: Message, state: FSMContext):
     data = await state.get_data()
 
@@ -66,48 +66,6 @@ async def create_password(message: Message, state: FSMContext):
     data['password'] = cleaned_text
     await state.update_data(data)
 
-    await message.answer(
-        text=f"<b>Ваш пароль - <code>{cleaned_text}</code> ✨!</b>\
-        \nУкажите контактую информацию:\
-        \n\n<i>* Телефон или иное средство для связи.</i>",
-    )
-    await state.set_state(CreateProfile.create_contacts)
-
-
-# --- Стадия 3. Пароль -> финиш --- #
-@router.message(CreateProfile.create_contacts)
-async def create_contacts(message: Message, state: FSMContext):
-    data = await state.get_data()
-
-    if message.text and any(char.isdigit() for char in message.text):
-        phone_number = re.sub(r'\D', '', message.text) # Оставить только цифры
-        if len(phone_number) == 11:
-            contact = f"+7 ({phone_number[1:4]}) {phone_number[4:7]}-{phone_number[7:9]}-{phone_number[9:]}"
-        else:
-            return await message.answer(
-                text="❌ <b>Нет-нет-нет!</b>\
-                    \nПохоже, Вы пытались указать номер телефона, но он должен состоять из <b>11 цифр</b>.\
-                    \n\n<i>* Вы можете повторить попытку:</i>"
-                )
-    else:
-        contact = message.text[:120]
-
-    cleaned_text = re.sub(r'[<>]', '', contact) # Убираем символы выделения
-    data['contacts'] = cleaned_text
-    await state.update_data(data)
-
-    await message.answer(
-        text="Подытожим...",
-        reply_markup=recreate_profile_kb()
-    )
-    await message.answer(
-        text=f"\
-        \n✅ Логин: <code>{data.get('login', '')}</code>\
-        \n✅ Пароль: <code>{data.get('password', '')}</code>\
-        \n✅ Способ связи: <code>{data.get('contacts', '')}</code>\
-        \n\n<i>Не забудьте эти данные, они понадобятся для входа.</i>", 
-        reply_markup=finish_registration_btns().as_markup()
-    )
 
 
 # --- Стадия 4. Финал --- #

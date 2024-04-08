@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from .schemas import CreateUserScheme, AddToBlackListScheme
+from .schemas import CreateUserScheme, AddToBlackListScheme, ChangeStatusScheme
 from .services import UserService
 
 
@@ -9,8 +9,8 @@ router = APIRouter()
 
 # --- Получение пользователя --- #
 @router.get('/get_user')
-async def get_user_controller(user_id: int):
-    return await UserService.get_user_service(user_id=user_id)
+async def get_user_controller(login: str):
+    return await UserService.get_user_service(login=login)
 
 
 # --- Регистрация пользователя --- #
@@ -21,8 +21,14 @@ async def create_user_controller(data: CreateUserScheme):
 
 # --- Удаление пользователя --- #
 @router.delete('/delete_user')
-async def delete_account_controller(user_id: int):
-    return await UserService.delete_user_service(user_id=user_id)
+async def delete_account_controller(login: str):
+    return await UserService.delete_user_service(login=login)
+
+
+# --- Изменение статуса авторизации --- #
+@router.put('/change_authorized_status')
+async def change_authorized_status_controller(data: ChangeStatusScheme):
+    return await UserService.change_authorized_status_service(data=data)
 
 
 # --- Получение данных о чёрном списке --- #
@@ -39,5 +45,5 @@ async def add_to_blacklist_controller(data: AddToBlackListScheme):
 
 # --- Удаление из чёрного списока --- #
 @router.delete('/delete_from_blacklist')
-async def delete_from_blacklist_controller(user_id: int):
-    return await UserService.delete_from_blacklist_service(user_id=user_id)
+async def delete_from_blacklist_controller(login: str):
+    return await UserService.delete_from_blacklist_service(login=login)

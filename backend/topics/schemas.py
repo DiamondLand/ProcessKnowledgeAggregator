@@ -4,24 +4,24 @@ from typing import Optional
 
 
 class CreateQuestion(pydantic.BaseModel):
-    user_id: int
+    login: str
     tag: Optional[str]
     question: Optional[str]
 
 
 class CreateAnswer(pydantic.BaseModel):
-    user_id: int
+    login: str
     question_id: int
     answer: str
 
 
 class UpdateStatus(pydantic.BaseModel):
-    user_id: int
+    login: str
     part_id: int
     status: bool
 
 
 class UpdateVotes(pydantic.BaseModel):
-    user_id: int
+    login: str
     part_id: int
     number: int
