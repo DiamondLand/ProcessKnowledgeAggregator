@@ -44,7 +44,7 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
                 set_index=False if create_answer or edit_question or view_answers else set_index  # Принудительно не задаём новый индекс если хотим просто поличть last_id
             )
 
-            # Получаем ID последней просмотренной анкеты и обновялем
+            # Получаем ID последнего просмотренного вопроса и обновялем
             last_question_id = await get_last_user_id(
                 message=message,
                 key=queue_index_key if global_tape else my_queue_index_key,
@@ -115,6 +115,7 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
 # --- Функция отправки ответов --- #
 async def send_searching_answers(message: Message, state: FSMContext, question_id: int, my_response, set_index: bool = True,
                                 vote: bool = False, global_tape: bool = True):
+    get_question = None
     async with httpx.AsyncClient() as client:
         if global_tape:
             get_question = await client.get(
@@ -128,14 +129,12 @@ async def send_searching_answers(message: Message, state: FSMContext, question_i
                 f"{message.bot.config['SETTINGS']['backend_url']}get_all_user_answers?login={my_response['login']}"
             )
 
-    if answers_response.status_code == 200 and get_question.status_code == 200:
+    if answers_response.status_code == 200:
         answers_data = answers_response.json()
-        question_data = get_question.json()
 
-        if answers_data and question_data:
+        if answers_data:
             my_answers_queue_index_key = f"user:{message.from_user.id}:my_answers_queue_index"
             answers_queue_index_key = f"user:{message.from_user.id}:answers_queue_index"
-            
             # Получаем индекс вопроса для показа и обновляем id последнего
             get_index = await change_queue_index(
                 message=message,
@@ -143,8 +142,7 @@ async def send_searching_answers(message: Message, state: FSMContext, question_i
                 key=answers_queue_index_key if global_tape else my_answers_queue_index_key,
                 set_index=False if vote else set_index  # Принудительно не задаём новый индекс если хотим просто поличть last_id
             )
-
-            # Получаем ID последней просмотренной анкеты и обновялем
+            # Получаем ID последнего просмотренного ответа и обновялем
             last_answer_id = await get_last_user_id(
                 message=message,
                 key=answers_queue_index_key if global_tape else my_answers_queue_index_key,
@@ -156,9 +154,9 @@ async def send_searching_answers(message: Message, state: FSMContext, question_i
                 ...
 
             await send_answer_card(
-                msg=message,
+                msg=message, 
                 answers_data=answers_data[get_index],
-                question=question_data['question']
+                question=get_question.json()['question'] if get_question else None
             )
         else:
             await message.answer(text="<b>Ответов на вопрос пока что нет 😉!</b>\n\nВы можете дать первый.", reply_markup=profile_kb())

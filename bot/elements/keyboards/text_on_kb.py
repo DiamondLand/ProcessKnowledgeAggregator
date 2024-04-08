@@ -9,7 +9,6 @@ auth_profile = "Авторизироваться"
 my_statistic = "Статистика аккаунта"
 my_questions = "Мои вопросы"
 all_questions = "Все вопросы"
-my_answers = "Мои ответы"
 
 next_my_answer = "Следующий ответ"  # Полностью русские символы
 next_all_answer = "Следующий oтвет"  # Буква "o" английская
@@ -23,7 +22,7 @@ answer_question = "Ответить на вопрос" # Полностью ру
 edit_my_answer = "Изменить ответ"
 edit_my_question = "Изменить вопрос"
 next_my_question = "Следующий вoпрoс"  # Обе бувы "o" английские
-view_answers_my_question = "Смoтреть oтветы" # Все бувы "o" английские
+view_answers_my_question = "Мои ответы" # Полностью русские символы
 answer_my_question = "Oтветить на вoпрoс" # Все бувы "o" английские
 
 back = "Назад ↩" # Полностью русские символы

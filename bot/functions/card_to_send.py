@@ -18,7 +18,7 @@ async def send_question_card(msg: Message, questions_data: dict):
 
 
 # --- Отправка картотчки ответа ---
-async def send_answer_card(msg: Message, answers_data: dict, question: str):
+async def send_answer_card(msg: Message, answers_data: dict, question: str = None):
     datetime_obj = datetime.strptime(answers_data['created_at'], '%Y-%m-%dT%H:%M:%S.%f%z')
     formatted_time = datetime_obj.strftime('%d-%m-%Y %H:%M')
 
