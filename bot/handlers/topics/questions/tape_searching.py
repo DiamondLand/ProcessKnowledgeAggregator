@@ -7,7 +7,7 @@ from decorators.profile_decorator import check_authorized
 from functions.views_logic.looped_tape import send_searching_questions
 
 from elements.keyboards.keyboards_searching import my_questions_kb, all_questions_kb
-from elements.keyboards.text_on_kb import my_questions, all_questions
+from elements.keyboards.text_on_kb import my_questions, all_questions, back_to_my_answers, back_to_global_answers
 
 from events.states_group import Searching
 
@@ -15,7 +15,7 @@ router = Router()
 
 
 # --- Кнопка просмотра ленты вопросов ---
-@router.message((F.text == my_questions) | (F.text == all_questions))
+@router.message((F.text == my_questions) | (F.text == all_questions) | (F.text == back_to_my_answers) | (F.text == back_to_global_answers))
 @check_authorized
 async def start_questions_searching(message: Message, state: FSMContext, get_user_response_json: dict):
     # Если стадия существует, выходим из неё
@@ -27,7 +27,7 @@ async def start_questions_searching(message: Message, state: FSMContext, get_use
     # Отправялем эмодзи и задаём keyboard
     await message.answer(
         text="🔎✨",
-        reply_markup=my_questions_kb() if message.text == my_questions else all_questions_kb()
+        reply_markup=all_questions_kb() if message.text in [all_questions, back_to_global_answers] else my_questions_kb()
     )
 
     # Переходим в функцию просмотра ленты
@@ -36,5 +36,5 @@ async def start_questions_searching(message: Message, state: FSMContext, get_use
         state=state,
         my_response=get_user_response_json,
         set_index=False,
-        global_tape=message.text == all_questions
+        global_tape=message.text in [all_questions, back_to_global_answers]
     )

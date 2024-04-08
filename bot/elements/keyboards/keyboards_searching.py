@@ -2,7 +2,7 @@ from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 
 from .text_on_kb import (next_question, vote_question, answer_question, edit_my_question,
                          view_answers_my_question, view_answers_question, next_my_question, answer_my_question, back,
-                         next_my_answer, next_all_answer, vote_answer, edit_my_answer)
+                         next_my_answer, next_all_answer, vote_answer, edit_my_answer, back_to_my_answers, back_to_global_answers)
 
 
 # --- Панель просмотра всех вопросов ---
@@ -39,7 +39,7 @@ def my_questions_kb() -> ReplyKeyboardMarkup:
 def all_answers_kb() -> ReplyKeyboardMarkup:
     kb = [
         [KeyboardButton(text=next_all_answer), KeyboardButton(text=vote_answer)],
-        [KeyboardButton(text=back)]
+        [KeyboardButton(text=back_to_global_answers)]
     ]
     return ReplyKeyboardMarkup(
         keyboard=kb,
@@ -52,7 +52,7 @@ def all_answers_kb() -> ReplyKeyboardMarkup:
 def my_answers_kb() -> ReplyKeyboardMarkup:
     kb = [
         [KeyboardButton(text=next_my_answer), KeyboardButton(text=edit_my_answer)],
-        [KeyboardButton(text=back)]
+        [KeyboardButton(text=back_to_my_answers)]
     ]
     return ReplyKeyboardMarkup(
         keyboard=kb,
