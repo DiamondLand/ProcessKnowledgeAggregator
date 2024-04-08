@@ -72,7 +72,7 @@ async def back_to_question_tape_func(message: Message, state: FSMContext):
 
     # Задаём новую стадию просмотра вопросов
     await state.set_state(Searching.tape_questions)
-    print(message.text == back_to_global_questions)
+
     # Возвращаемся к просмотру ленты
     await message.answer(
         text="🔎✨",

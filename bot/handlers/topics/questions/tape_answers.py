@@ -85,7 +85,7 @@ async def create_answer(message: Message, state: FSMContext):
 
     if create_answer_response.status_code == 200:
         # Задаём новую стадию просмотра вопросов
-        await state.set_state(Searching.tape_questions)
+        await state.set_state(Searching.view_answers)
 
         # Возвращаемся к просмотру ленты
         await message.answer(

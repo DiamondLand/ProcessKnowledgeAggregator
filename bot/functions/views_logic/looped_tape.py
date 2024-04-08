@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from functions.card_to_send import send_question_card, send_answer_card
 
 from elements.keyboards.keyboards_profile import profile_kb
-from elements.keyboards.keyboards_searching import all_answers_kb, my_answers_kb
+from elements.keyboards.keyboards_searching import my_questions_kb, all_questions_kb, all_answers_kb, my_answers_kb
 from elements.keyboards.keyboards_questions import back_to_global_questions_kb, back_to_my_questions_kb
 
 from elements.answers import server_error
@@ -74,7 +74,7 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
                     global_tape=global_tape
                 )
             
-            # :TODO: Если хотим ответить на вопрос
+            # Ответ на вопрос
             if create_answer is True:
                 await state.set_state(Searching.create_answer)
 
@@ -158,7 +158,22 @@ async def send_searching_answers(message: Message, state: FSMContext, question_i
                 answers_data=answers_data[get_index],
                 question=get_question.json()['question'] if get_question else None
             )
-        else:
-            await message.answer(text="<b>Ответов на вопрос пока что нет 😉!</b>\n\nВы можете дать первый.", reply_markup=profile_kb())
+        else:  
+            # Задаём новую стадию просмотра вопросов
+            await state.set_state(Searching.tape_questions)
+
+            # Возвращаемся к просмотру ленты
+            await message.answer(
+                text="<b>Ответов на вопрос пока что нет 😉!</b>\n\nВы можете оставить его первым!",
+                reply_markup=all_questions_kb() if global_tape else my_questions_kb()
+            )
+
+            await send_searching_questions(
+                message=message,
+                state=state,
+                my_response=my_response,
+                set_index=False,
+                global_tape=global_tape
+            )
     else:
         await message.answer(text=server_error, reply_markup=profile_kb())
