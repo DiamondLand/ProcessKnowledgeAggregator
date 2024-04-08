@@ -22,8 +22,13 @@ class Searching(StatesGroup):
 
     view_answers = State()
 
-    create_question = State()
     create_answer = State()
+
+
+# --- StatesGroup Создание вопроса ---
+class CreateQuestion(StatesGroup):
+    create_question = State()
+    create_question_tag = State()
 
 
 # --- StatesGroup изменения вопросов/ответов  ---

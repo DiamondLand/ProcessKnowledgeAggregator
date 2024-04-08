@@ -70,7 +70,7 @@ async def create_answer(message: Message, state: FSMContext):
 
     cleaned_text = re.sub(r'[<>]', '', message.text)  # Убираем символы выделения
     if len(cleaned_text) < 4 or len(cleaned_text) > 1000:
-        return await message.answer(text="❌ Текст должен быть не короче 4 и не длиннее 1.000 символов! Пожалуйста, повтори ввод:")
+        return await message.answer(text="❌ Текст должен быть не короче 4 и не длиннее 1.000 символов! Пожалуйста, повторите ввод:")
 
     question_id = data.get('question_id', None)
     global_tape = data.get('global_tape', True)

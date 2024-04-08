@@ -56,6 +56,6 @@ async def check_captcha(message: Message, state: FSMContext):
         )
     else:
         await message.answer(
-            text=f"❌ Не верно! Повторите ввод: <strike><b>{captcha_text}</b></strike>",
+            text=f"❌ Не верно! повторитете ввод: <strike><b>{captcha_text}</b></strike>",
             reply_markup=ReplyKeyboardRemove()
         )
