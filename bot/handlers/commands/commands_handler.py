@@ -32,7 +32,7 @@ async def cmd_info(message: Message, state: FSMContext):
 
 
 # --- Админская панель --- #
-@router.message(Command("admin", "bin"))
+@router.message(Command("admin"))
 async def cmd_admin(message: Message, state: FSMContext):
     # Если стадия существует, выходим из неё
     if await state.get_state() is not None:

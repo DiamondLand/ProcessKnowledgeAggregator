@@ -35,15 +35,16 @@ class UserService:
     @staticmethod  # Регистрация пользователя
     async def create_user_service(data: CreateUserScheme):
         check_contacts_response = await User.filter(contacts=data.contacts).exclude(login=data.login).get_or_none()
+        check_login_response = await User.filter(login=data.login).exclude(login=data.login).get_or_none()
         another_accounts_response = await User.filter(user_id=data.user_id).all()
 
-        # Отключаемся от других аккаунтов
-        if another_accounts_response:
-            for account in another_accounts_response:
-                account.user_id = None
-                await account.save()
-
-        if check_contacts_response is None:
+        if check_contacts_response is None and check_login_response is None: 
+            # Отключаемся от других аккаунтов
+            if another_accounts_response:
+                for account in another_accounts_response:
+                    account.user_id = None
+                    await account.save()
+           
             user, created = await User.update_or_create(
                 login=data.login,
                 defaults={

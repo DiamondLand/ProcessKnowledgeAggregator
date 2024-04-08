@@ -148,12 +148,15 @@ async def finish_registration(callback: CallbackQuery, state: FSMContext):# -
             })
 
         if create_user_response.status_code == 200:
-            await state.clear()
+            if create_user_response.json():
+                await state.clear()
 
-            await callback.message.answer(
-                text=f"Добро пожаловать, @{callback.from_user.username}",
-                reply_markup=profile_kb()
-            )
-            await delete_redis_keys(msg=callback.message, user_id=callback.from_user.id)
+                await callback.message.answer(
+                    text=f"Добро пожаловать, @{callback.from_user.username}",
+                    reply_markup=profile_kb()
+                )
+                await delete_redis_keys(msg=callback.message, user_id=callback.from_user.id)
+            else:
+                await callback.message.answer(text="❌ Логин и/или пароль уже заняты!")
         else:
             await callback.message.answer(text=server_error)
