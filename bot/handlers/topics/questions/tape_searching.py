@@ -17,7 +17,7 @@ router = Router()
 # --- Кнопка просмотра ленты вопросов ---
 @router.message((F.text == my_questions) | (F.text == all_questions))
 @check_authorized
-async def start_questions_searching(message: Message, state: FSMContext, get_user_response_json: dict, global_tape: bool = False):
+async def start_questions_searching(message: Message, state: FSMContext, get_user_response_json: dict):
     # Если стадия существует, выходим из неё
     if await state.get_state() is not None:
         await state.clear()
@@ -36,5 +36,5 @@ async def start_questions_searching(message: Message, state: FSMContext, get_use
         state=state,
         my_response=get_user_response_json,
         set_index=False,
-        global_tape=(message.text == all_questions or global_tape)
+        global_tape=message.text == all_questions
     )

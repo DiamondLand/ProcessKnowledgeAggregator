@@ -57,10 +57,9 @@ async def send_searching_questrions(message: Message, state: FSMContext, my_resp
                 data['question_id'] = last_question_id
                 data['user_response'] = my_response
                 await state.update_data(data)
-
                 return await message.answer(
-                    text=f"Просматриваются ответы на вопрос: <i>{questions_data[get_index]['question']}</i>:",
-                    reply_markup=back_to_global_questions_kb()
+                    text=f"Просматриваются ответы на вопрос <i>{questions_data[get_index]['question']}</i>:",
+                    reply_markup=back_to_global_questions_kb() if global_tape else back_to_my_questions_kb()
                 )
             
             # :TODO: Если хотим ответить на вопрос
@@ -73,8 +72,8 @@ async def send_searching_questrions(message: Message, state: FSMContext, my_resp
                 await state.update_data(data)
 
                 return await message.answer(
-                    text="Напишите ответ для этого вопроса или прикрепите фотографию:",
-                    reply_markup=back_to_global_questions_kb()
+                    text=f"Напишите ответ для вопроса <i>{questions_data[get_index]['question']}</i> или прикрепите фотографию:",
+                    reply_markup=back_to_global_questions_kb() if global_tape else back_to_my_questions_kb()
                 )
 
             # :TODO: Если хотим отредактировать на вопрос
@@ -87,7 +86,7 @@ async def send_searching_questrions(message: Message, state: FSMContext, my_resp
                 await state.update_data(data)
 
                 return await message.answer(
-                    text="Изложите суть вопроса:",
+                    text=f"<b>Текущий вопрос:</b> <i>{questions_data[get_index]['question']}</i>\n\nВведите новый вариант:",
                     reply_markup=back_to_my_questions_kb()
                 )
 
