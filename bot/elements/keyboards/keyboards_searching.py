@@ -38,7 +38,7 @@ def my_questions_kb() -> ReplyKeyboardMarkup:
 # --- Панель просмотра всех ответов ---
 def all_answers_kb() -> ReplyKeyboardMarkup:
     kb = [
-        [KeyboardButton(text=next_all_answer), KeyboardButton(text=vote_answer)],
+        [KeyboardButton(text=vote_answer), KeyboardButton(text=next_all_answer)],
         [KeyboardButton(text=back_to_global_answers)]
     ]
     return ReplyKeyboardMarkup(
@@ -51,7 +51,7 @@ def all_answers_kb() -> ReplyKeyboardMarkup:
 # --- Панель просмотра всех ответов ---
 def my_answers_kb() -> ReplyKeyboardMarkup:
     kb = [
-        [KeyboardButton(text=next_my_answer), KeyboardButton(text=edit_my_answer)],
+        [KeyboardButton(text=edit_my_answer), KeyboardButton(text=next_my_answer)],
         [KeyboardButton(text=back_to_my_answers)]
     ]
     return ReplyKeyboardMarkup(
