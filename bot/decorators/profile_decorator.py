@@ -5,6 +5,7 @@ from aiogram.fsm.context import FSMContext
 
 from functions.account.account_responses import check_account
 from functions.account.account_prefabs import prefab_account_check_authorized, prefab_account_blacklist
+from functions.captcha.captha_suspected import is_suspected_robot, handle_suspected_robot
 
 from elements.answers import server_error
 
@@ -43,3 +44,15 @@ def check_authorized(func):
             await state.clear()
             return await message.answer(text=server_error)
     return wrapper
+
+
+# --- Проверка частоты использования команд --- #
+def anti_robot_check(func):
+    @wraps(func)
+    async def wrapped(message: Message, state: FSMContext, *args, **kwargs):
+        if await is_suspected_robot(state):
+            return await handle_suspected_robot(message, state)
+
+        return await func(message, state, *args, **kwargs)
+    return wrapped
+

@@ -34,7 +34,7 @@ async def send_searching_questrions(message: Message, state: FSMContext, my_resp
         if questions_data:
             my_queue_index_key = f"user:{message.from_user.id}:my_queue_index"
             queue_index_key = f"user:{message.from_user.id}:queue_index"
-
+            
             # Получаем индекс вопроса для показа и обновляем id последнего
             get_index = await change_queue_index(
                 message=message,
