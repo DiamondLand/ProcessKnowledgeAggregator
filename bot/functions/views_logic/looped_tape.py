@@ -16,12 +16,12 @@ from .queue import change_queue_index, get_last_user_id
 
 
 # --- Функция отправки вопросов --- #
-async def send_searching_questrions(message: Message, state: FSMContext, my_response, set_index: bool = True,
+async def send_searching_questrions(message: Message, state: FSMContext, my_response, set_index: bool = True, view_answers: bool = False,
                                     edit_question: bool = False, create_answer: bool = False, global_tape: bool = True):
     async with httpx.AsyncClient() as client:
         if global_tape:
             questions_response = await client.get(
-                f"{message.bot.config['SETTINGS']['backend_url']}get_all_user_questions"
+                f"{message.bot.config['SETTINGS']['backend_url']}get_all_questions"
             )
         else:
             questions_response = await client.get(
@@ -50,13 +50,26 @@ async def send_searching_questrions(message: Message, state: FSMContext, my_resp
                 last_id=questions_data[get_index]['id']
             )
 
+            if view_answers is True:
+                await state.set_state(Searching.view_answers)
+
+                data = await state.get_data()
+                data['question_id'] = last_question_id
+                data['user_response'] = my_response
+                await state.update_data(data)
+
+                return await message.answer(
+                    text=f"Просматриваются ответы на вопрос: <i>{questions_data[get_index]['question']}</i>:",
+                    reply_markup=back_to_global_questions_kb()
+                )
+            
             # :TODO: Если хотим ответить на вопрос
             if create_answer is True:
                 await state.set_state(Searching.create_answer)
 
                 data = await state.get_data()
                 data['question_id'] = last_question_id
-                data['my_response'] = my_response
+                data['user_response'] = my_response
                 await state.update_data(data)
 
                 return await message.answer(
@@ -70,7 +83,7 @@ async def send_searching_questrions(message: Message, state: FSMContext, my_resp
 
                 data = await state.get_data()
                 data['question_id'] = last_question_id
-                data['my_response'] = my_response
+                data['user_response'] = my_response
                 await state.update_data(data)
 
                 return await message.answer(

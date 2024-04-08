@@ -20,6 +20,8 @@ class Searching(StatesGroup):
     tape_questions = State()
     tape_answers = State()
 
+    view_answers = State()
+
     create_question = State()
     create_answer = State()
 
