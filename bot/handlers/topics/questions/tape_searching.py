@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 
 from decorators.profile_decorator import check_authorized
 
-from functions.views_logic.looped_tape import send_searching_questrions
+from functions.views_logic.looped_tape import send_searching_questions
 
 from elements.keyboards.keyboards_searching import my_questions_kb, all_questions_kb
 from elements.keyboards.text_on_kb import my_questions, all_questions
@@ -31,7 +31,7 @@ async def start_questions_searching(message: Message, state: FSMContext, get_use
     )
 
     # Переходим в функцию просмотра ленты
-    await send_searching_questrions(
+    await send_searching_questions(
         message=message,
         state=state,
         my_response=get_user_response_json,
