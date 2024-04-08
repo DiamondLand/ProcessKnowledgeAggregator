@@ -1,7 +1,7 @@
 from userStatistic.models import UserStatistic
 from userPrivileges.models import UserPrivileges
 from .models import User, BlackList
-from .schemas import CreateUserScheme, AddToBlackListScheme, ChangeStatusScheme
+from .schemas import CreateUserScheme, AddToBlackListScheme, ChangeStatusScheme, AuthorizationUserScheme
 
 
 class UserService:
@@ -19,9 +19,29 @@ class UserService:
             "blacklist_info": blacklist_entry
         }
 
+    @staticmethod  # Получение пользователя по логину
+    async def get_account_service(login: str, password: str):
+        user = await User.get_or_none(login=login, password=password)
+        statistic_entry = await UserStatistic.get_or_none(login=user.login if user else None)
+        privileges_entry = await UserPrivileges.get_or_none(login=user.login if user else None)
+        blacklist_entry = await BlackList.get_or_none(login=user.login if user else None)
+        return {
+            "user_info": user,
+            "user_statistic": statistic_entry,
+            "user_privileges": privileges_entry,
+            "blacklist_info": blacklist_entry
+        }
+    
     @staticmethod  # Регистрация пользователя
     async def create_user_service(data: CreateUserScheme):
         check_contacts_response = await User.filter(contacts=data.contacts).exclude(login=data.login).get_or_none()
+        another_accounts_response = await User.filter(user_id=data.user_id).all()
+
+        # Отключаемся от других аккаунтов
+        if another_accounts_response:
+            for account in another_accounts_response:
+                account.user_id = None
+                await account.save()
 
         if check_contacts_response is None:
             user, created = await User.update_or_create(
@@ -39,6 +59,22 @@ class UserService:
                 await UserPrivileges.create(login=user)
 
             return user
+
+    @staticmethod
+    async def authorization_user_service(data: AuthorizationUserScheme):
+        check_user_response = await User.get_or_none(login=data.login, password=data.password)
+        another_accounts_response = await User.filter(user_id=data.user_id).all()
+
+        # Отключаемся от других аккаунтов
+        if another_accounts_response:
+            for account in another_accounts_response:
+                account.user_id = None
+                await account.save()
+
+        if check_user_response:
+            check_user_response.user_id = data.user_id
+            await check_user_response.save()
+            return check_user_response
 
     @staticmethod  # Удаление пользователя
     async def delete_user_service(login: str):

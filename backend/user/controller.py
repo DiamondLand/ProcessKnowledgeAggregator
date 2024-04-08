@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from .schemas import CreateUserScheme, AddToBlackListScheme, ChangeStatusScheme
+from .schemas import CreateUserScheme, AddToBlackListScheme, ChangeStatusScheme, AuthorizationUserScheme
 from .services import UserService
 
 
@@ -13,10 +13,22 @@ async def get_user_controller(user_id: int):
     return await UserService.get_user_service(user_id=user_id)
 
 
+# --- Получение пользователя по логину --- #
+@router.get('/get_account')
+async def get_account_controller(login: str, password: str):
+    return await UserService.get_account_service(login=login, password=password)
+
+
 # --- Регистрация пользователя --- #
 @router.post('/create_user')
 async def create_user_controller(data: CreateUserScheme):
     return await UserService.create_user_service(data=data)
+
+
+# --- Авторизация пользователя --- #
+@router.put('/authorization_user')
+async def authorization_user_controller(data: AuthorizationUserScheme):
+    return await UserService.authorization_user_service(data=data)
 
 
 # --- Удаление пользователя --- #

@@ -13,12 +13,12 @@ router = Router()
 # --- Главная панель --- #
 @router.message(Command("start", "profile"))
 @check_authorized
-async def cmd_start(message: Message, state: FSMContext):
+async def cmd_start(message: Message, state: FSMContext, get_user_response: dict):
     # Если стадия существует, выходим из неё
     if await state.get_state() is not None:
         await state.clear()
 
-    await message.answer(text=f"Добро пожаловать, @{message.from_user.username}!", reply_markup=profile_kb())
+    await message.answer(text=f"<b>Добро пожаловать, @{message.from_user.username}!</b>\n\nВы вошли под <code>{get_user_response['login']}</code>!", reply_markup=profile_kb())
 
 
 # --- Информационная панель --- #

@@ -8,6 +8,12 @@ class CreateUserScheme(pydantic.BaseModel):
     password: str
 
 
+class AuthorizationUserScheme(pydantic.BaseModel):
+    user_id: int
+    login: str
+    password: str
+
+
 class AddToBlackListScheme(pydantic.BaseModel):
     login: str
     reason: str

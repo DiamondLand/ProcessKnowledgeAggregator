@@ -2,20 +2,18 @@ import httpx
 import re
 
 from aiogram import Router, F
-from aiogram.types import Message, ReplyKeyboardRemove, CallbackQuery
+from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 
-from functions.inline_remove import remove_button
-from functions.account.account_responses import check_account
+from functions.account.account_responses import check_account_login
 from functions.account.account_data import delete_redis_keys
 from functions.account.account_prefabs import prefab_account_blacklist
 
-from elements.inline.inline_profile import finish_registration_btns
 from elements.keyboards.keyboards_utilits import form_cancel_kb
-from elements.keyboards.keyboards_profile import recreate_profile_kb
+from elements.keyboards.keyboards_profile import reg_or_auth_kb
 
 from elements.keyboards.text_on_kb import auth_profile
-from elements.answers import server_error, no_state
+from elements.answers import server_error
 
 from events.states_group import Authorizationrofile
 
@@ -30,12 +28,12 @@ async def create_profile_btn(message: Message, state: FSMContext):
         await state.clear()
 
     await message.answer(
-        text="<b>Добро пожаловать 💕!</b>\
-        \nПриступим к регистрации...",
+        text="<b>Рады видеть вас снова 💕!</b>\
+        \nПриступим к авторизации...",
         reply_markup=form_cancel_kb()
     )
     await message.answer(
-        text=f"@{message.from_user.username}, придумай логин до <b>40-а</b> символов:"
+        text=f"@{message.from_user.username}, введите логин:"
     )
     await state.set_state(Authorizationrofile.authorization_login)
 
@@ -45,14 +43,13 @@ async def create_profile_btn(message: Message, state: FSMContext):
 async def authorization_login(message: Message, state: FSMContext):
     data = await state.get_data()
 
-    cleaned_text = re.sub(r'[<>]', '', message.text[:30]) # Убираем символы выделения
+    # Убираем символы выделения
+    cleaned_text = re.sub(r'[<>]', '', message.text[:30])
     data['login'] = cleaned_text
     await state.update_data(data)
 
-    # :TODO: Длбавить генерацию пароля
     await message.answer(
-        text=f"<b>Запомнил - <code>{cleaned_text}</code> ✨!</b>\
-        \nТеперь потребуется пароль:",
+        text=f"Теперь потребуется пароль:",
     )
     await state.set_state(Authorizationrofile.authorization_password)
 
@@ -61,61 +58,50 @@ async def authorization_login(message: Message, state: FSMContext):
 @router.message(Authorizationrofile.authorization_password)
 async def authorization_password(message: Message, state: FSMContext):
     data = await state.get_data()
-
     cleaned_text = re.sub(r'[<>]', '', message.text[:50]) # Убираем символы выделения
-    data['password'] = cleaned_text
-    await state.update_data(data)
 
-
-
-# --- Стадия 4. Финал --- #
-@router.callback_query(F.data == "finish_registration")
-async def finish_registration(callback: CallbackQuery, state: FSMContext):# -
-    data = await state.get_data()
-
-    # Удаляем кнопку с сообщения
-    await remove_button(msg=callback.message, state=state)
-
-    # Проверка на сохранение данных. Берём самое последнее (contacts)
-    if not data.get('contacts', ''):
-        await state.clear()
-        return await callback.message.answer(text=no_state)
-
-    get_user_response = await check_account(config=callback.bot.config, user_id=callback.from_user.id)
-    # * .json() -> [{'user_info'}: ..., {'user_statistic'}: ..., {'user_privileges'}: ..., {'blacklist_info'}: ...]
-    
-    # Используем префаб проверки на блокировку
-    ban_status = await prefab_account_blacklist(
-        msg=callback.message,
-        user_id=callback.from_user.id,
-        state=state,
-        get_user_response=get_user_response
+    get_user_response = await check_account_login(
+        config=message.bot.config,
+        login=data.get('login', ''),
+        password=cleaned_text
     )
-    # * [server_response, None or message]
-    # * server_response.json() -> {'user_info'}: ..., {'user_statistic'}: ..., {'user_privileges'}: ..., {'blacklist_info'}: ...
+    # * .json() -> [{'user_info'}: ..., {'user_statistic'}: ..., {'user_privileges'}: ..., {'blacklist_info'}: ...]
+    if get_user_response.status_code == 200:
+        if get_user_response.json():
+            # Используем префаб проверки на блокировку
+            ban_status = await prefab_account_blacklist(
+                msg=message,
+                user_id=message.from_user.id,
+                state=state,
+                get_user_response=get_user_response
+            )
+            # * [server_response, None or message]
+            # * server_response.json() -> {'user_info'}: ..., {'user_statistic'}: ..., {'user_privileges'}: ..., {'blacklist_info'}: ...
 
-    # Если префаб ничего не вернул (препядствий для пользователя нет)
-    if ban_status[1] is None:
-        await callback.message.answer(
-            text=f"🕠 Секундочку...", 
-            reply_markup=ReplyKeyboardRemove()
-        )
+            # Если префаб ничего не вернул (препядствий для пользователя нет)
+            if ban_status[1] is None:
+                await message.answer(
+                    text=f"🕠 Секундочку...",
+                    reply_markup=ReplyKeyboardRemove()
+                )
 
-        # Записываем в базу данные, введённые при регистрации
-        async with httpx.AsyncClient() as client:
-            create_user_response = await client.post(callback.bot.config["SETTINGS"]["backend_url"] + 'create_user', json={
-                'user_id': callback.from_user.id,
-                'login': data.get('login', ''),
-                'password': data.get('password', None),
-                'contacts': data.get('contacts', '')
-            })
+                # Авторизируем пользователя
+                async with httpx.AsyncClient() as client:
+                    create_user_response = await client.put(message.bot.config["SETTINGS"]["backend_url"] + 'authorization_user', json={
+                        'user_id': message.from_user.id,
+                        'login': data.get('login', ''),
+                        'password': cleaned_text
+                    })
 
-        if create_user_response.status_code == 200:
-            await state.clear()
+                if create_user_response.status_code == 200:
+                    await state.clear()
+                    await message.answer(text="Добро пожаловать!")
 
-            # :TODO: Перебрасывать в панель аккаунта
-            await callback.message.answer(text="Добро пожаловать!")
-
-            await delete_redis_keys(msg=callback.message, user_id=callback.from_user.id)
+                    await delete_redis_keys(msg=message, user_id=message.from_user.id)
+                else:
+                    await message.answer(text=server_error)
         else:
-            await callback.message.answer(text=server_error)
+            await state.clear()
+            await message.answer(text="Аккаунт не найден!", reply_markup=reg_or_auth_kb())
+    else:
+        await message.answer(text=server_error)

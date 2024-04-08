@@ -7,7 +7,7 @@ class User(Model):
     id = fields.IntField(pk=True)
     login = fields.CharField(max_length=300, unique=True)
     
-    user_id = fields.IntField()
+    user_id = fields.IntField(null=True)
     contacts = fields.CharField(max_length=50, unique=True)
     password = fields.CharField(max_length=300)
 

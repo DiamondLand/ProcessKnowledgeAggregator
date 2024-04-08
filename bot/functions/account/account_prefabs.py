@@ -9,7 +9,7 @@ from elements.answers import server_error, banned, no_authorized
 # --- Проверка на авторизацию --- #
 async def prefab_account_check_authorized(msg: Message, state: FSMContext, get_user_response: dict):
     if get_user_response.status_code == 200:
-        if get_user_response.json()['user_info'] is None or 'is_authorized' in get_user_response.json()['user_info']:
+        if get_user_response.json()['user_info'] is None or get_user_response.json()['user_info']['is_authorized'] is False:
             await msg.answer(
                 text=no_authorized,
                 reply_markup=reg_or_auth_kb()
