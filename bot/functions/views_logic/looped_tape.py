@@ -56,6 +56,7 @@ async def send_searching_questrions(message: Message, state: FSMContext, my_resp
                 data = await state.get_data()
                 data['question_id'] = last_question_id
                 data['user_response'] = my_response
+                data['global_tape'] = global_tape
                 await state.update_data(data)
                 return await message.answer(
                     text=f"Просматриваются ответы на вопрос <i>{questions_data[get_index]['question']}</i>:",
