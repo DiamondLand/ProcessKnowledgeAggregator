@@ -9,15 +9,14 @@ from decorators.profile_decorator import anti_robot_check
 
 from functions.views_logic.looped_tape import send_searching_answers
 
-from elements.keyboards.keyboards_answers import back_to_answers_kb
 from elements.keyboards.keyboards_searching import all_answers_kb, my_answers_kb
 from elements.keyboards.keyboards_profile import profile_kb
 
-from elements.keyboards.text_on_kb import (next_my_answer, next_all_answer, vote_answer, back_to_my_answers, back_to_global_answers)
+from elements.keyboards.text_on_kb import next_my_answer, next_all_answer, vote_answer
 
 from elements.answers import no_state, server_error
 
-from events.states_group import Searching, EditQuestionOrAnswer
+from events.states_group import Searching
 
 router = Router()
 
@@ -40,7 +39,7 @@ async def profile_searching(message: Message, state: FSMContext):
     question_id = data.get('question_id', None)
     
     actions = {
-        'vote_answer': message.text in [vote_answer],
+        'vote': message.text in [vote_answer],
         'global_tape': global_tape
     }
 

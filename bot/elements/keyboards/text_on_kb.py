@@ -1,9 +1,6 @@
 cancel_button = "Прервать заполнение ❌"
 back_to_my_questions = "Вернуться назад ↩"  # Полностью русские символы
 back_to_global_questions = "Вернуться нaзад ↩"  # Буква "a" английская
-
-back_to_global_answers = "Вeрнуться назад ↩"  # Буква "e" английская
-back_to_my_answers = "Вepнуться нaзaд ↩"  # Все бувы  "a" английские, буква "p" аннглийская
 recreate_profile = "Пересоздать аккаунт"
 
 reg_profile = "Зарегистрироваться"
