@@ -48,6 +48,12 @@ async def create_question_controller(data: CreateQuestion):
     return await TopicService.create_question_service(data=data)
 
 
+# --- Обновление вопроса --- #
+@router.put('/update_question')
+async def update_question_controller(data: UpdateQuestion):
+    return await TopicService.update_question_service(data=data)
+
+
 # --- Создание ответа --- #
 @router.post('/create_answer')
 async def create_answer_controller(data: CreateAnswer):

@@ -37,9 +37,9 @@ async def main():
         commands_handler.router,
         register.router,
         authorization.router,
-        create_question.router,
         tape_searching.router,
         tape_questions.router,
+        create_question.router,
         create_answers.router,
 
         # Должно быть в конце для заполения форм

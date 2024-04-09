@@ -49,6 +49,17 @@ class TopicService:
             question = await TopicQuections.create(tag=data.tag, question=data.question)
             await user.user_question.add(question)
             return question
+    
+    @staticmethod  # Обновление вопроса
+    async def update_question_service(data: UpdateQuestion):
+        question = await TopicQuections.get_or_none(id=data.question_id)
+        
+        if question:
+            question.question = data.question
+            question.tag = data.tag
+            await question.save()
+            
+            return question
 
     @staticmethod  # Создание ответа
     async def create_answer_service(data: CreateAnswer):

@@ -35,18 +35,11 @@ async def tags_to_question_kb(config) -> ReplyKeyboardMarkup:
     if response.status_code == 200 and questions:
         buttons = []
         used_tags = set()
-
         for question in questions:
             tag = question.get('tag')
             if tag and tag not in used_tags:
                 buttons.append([KeyboardButton(text=tag)])
                 used_tags.add(tag)
-
-        # Добавляем кнопки только если соответствующие теги еще не использованы
-        if tag_general not in used_tags and tag_production not in used_tags:
-            buttons.append([KeyboardButton(text=tag_general), KeyboardButton(text=tag_production)])
-        if tag_salary not in used_tags and tag_workshops not in used_tags:
-            buttons.append([KeyboardButton(text=tag_salary), KeyboardButton(text=tag_workshops)])
 
             buttons.append([KeyboardButton(text=cancel_button)])
 

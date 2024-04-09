@@ -9,6 +9,13 @@ class CreateQuestion(pydantic.BaseModel):
     question: Optional[str]
 
 
+class UpdateQuestion(pydantic.BaseModel):
+    question_id: int
+    login: str
+    tag: Optional[str]
+    question: Optional[str]
+
+
 class CreateAnswer(pydantic.BaseModel):
     login: str
     question_id: int
