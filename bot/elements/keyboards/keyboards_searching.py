@@ -11,8 +11,7 @@ def all_questions_kb() -> ReplyKeyboardMarkup:
         [KeyboardButton(text=view_answers_question), KeyboardButton(text=next_question)],
         [KeyboardButton(text=answer_question)],
         [KeyboardButton(text=vote_question)],
-        [KeyboardButton(text=tag_searching)],
-        [KeyboardButton(text=back)]
+        [KeyboardButton(text=tag_searching), KeyboardButton(text=back)]
     ]
     return ReplyKeyboardMarkup(
         keyboard=kb,

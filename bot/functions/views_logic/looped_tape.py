@@ -21,7 +21,7 @@ from .queue import change_queue_index, get_last_user_id
 async def send_searching_questions(message: Message, state: FSMContext, my_response, set_index: bool = True, view_answers: bool = False, tag: str = None,
                                     edit: bool = False, vote: bool = False, create_answer: bool = False, global_tape: bool = True, another_key: str = None):
     async with httpx.AsyncClient() as client:
-        if global_tape and tag:
+        if global_tape and tag is None:
             questions_response = await client.get(
                 f"{message.bot.config['SETTINGS']['backend_url']}get_all_questions"
             )
