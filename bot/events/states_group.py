@@ -18,6 +18,8 @@ class Authorizationrofile(StatesGroup):
 # --- StatesGroup просмотра лент вопросов ---
 class Searching(StatesGroup):
     tape_questions = State()
+    tape_tag_questions_write = State()
+    tape_tag_questions = State()
     tape_answers = State()
 
     view_answers = State()

@@ -11,6 +11,7 @@ from elements.keyboards.keyboards_profile import profile_kb
 from elements.keyboards.text_on_kb import create_question
 
 from elements.keyboards.keyboards_utilits import form_cancel_kb
+from elements.keyboards.keyboards_questions import tags_to_question_kb
 
 from elements.answers import no_state, server_error
 
@@ -43,7 +44,7 @@ async def create_question_choice(message: Message, state: FSMContext):
     if current_state is not None and current_state != CreateQuestion.create_question:
         await state.clear()
 
-    cleaned_text = re.sub(r'[<>]', '', message.text)  # Убираем символы выделения
+    cleaned_text = re.sub(r'[<>]', '', message.text.capitalize())  # Убираем символы выделения
     if len(cleaned_text) < 4 or len(cleaned_text) > 1000:
         return await message.answer(text="❌ Текст должен быть не короче 4 и не длиннее 1.000 символов! Пожалуйста, повторите ввод:")
 
@@ -53,10 +54,9 @@ async def create_question_choice(message: Message, state: FSMContext):
 
     await state.set_state(CreateQuestion.create_question_tag)
 
-    # :TODO: Добавить заготовленные теги
     await message.answer(
-        text=f"Какая категория у вопроса? Введите тег:",
-        reply_markup=form_cancel_kb()
+        text=f"Какая категория у вопроса? Введите тег или выберите самые популярные по кнопкам ниже:",
+        reply_markup=await tags_to_question_kb(config=message.bot.config)
     )
 
 
@@ -71,7 +71,7 @@ async def create_question_tag_choice(message: Message, state: FSMContext, get_us
         await state.clear()
         return await message.answer(text=no_state, reply_markup=profile_kb())
 
-    cleaned_text = re.sub(r'[<>]', '', message.text)  # Убираем символы выделения
+    cleaned_text = re.sub(r'[<>]', '', message.text.capitalize())  # Убираем символы выделения
     if len(cleaned_text) < 4 or len(cleaned_text) > 1000:
         return await message.answer(text="❌ Текст должен быть не короче 4 и не длиннее 1.000 символов! Пожалуйста, повторите ввод:")
 

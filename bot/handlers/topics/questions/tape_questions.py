@@ -8,7 +8,7 @@ from functions.views_logic.looped_tape import send_searching_questions
 
 from elements.keyboards.keyboards_searching import my_questions_kb, all_questions_kb
 from elements.keyboards.keyboards_profile import profile_kb
-from elements.keyboards.text_on_kb import (next_my_question, next_question, view_answers_my_question, view_answers_question,
+from elements.keyboards.text_on_kb import (next_my_question, next_question, view_answers_my_question, view_answers_question, tag_searching,
                                            answer_my_question, answer_question, edit_my_question, vote_question, back_to_my_questions, back_to_global_questions)
 
 from elements.answers import no_state
@@ -28,7 +28,7 @@ router = Router()
 )
 @anti_robot_check
 @check_authorized
-async def profile_searching(message: Message, state: FSMContext, my_response: dict):
+async def questions_searching(message: Message, state: FSMContext, my_response: dict):
     # Если стадия существует, выходим из неё
     current_state = await state.get_state()
     if current_state is not None and current_state != Searching.tape_questions:
@@ -47,6 +47,40 @@ async def profile_searching(message: Message, state: FSMContext, my_response: di
         message=message,
         state=state,
         my_response=my_response,
+        **actions
+    )
+
+
+# --- Кнопки действий при просмотре ленты вопросов по тегам --- #
+@router.message(
+    Searching.tape_tag_questions,
+    (F.text == next_question) | (F.text == view_answers_question)
+    (F.text == answer_question) | (F.text == vote_question) | (F.text == tag_searching) 
+)
+@anti_robot_check
+@check_authorized
+async def questions_tag_searching(message: Message, state: FSMContext, my_response: dict):
+    data = await state.get_data()
+
+    # Проверка на существование формы для заполнения
+    if not data:
+        await state.clear()
+        return await message.answer(text=no_state, reply_markup=profile_kb())
+
+    actions = {
+        'view_answers': message.text in [view_answers_question], #* При просмотре ответов и возвращении назад пользователь переведётся в ОБЩУЮ ленту вопросов (не по тегу)
+        'vote': message.text in [vote_question],
+        'create_answer': message.text in [answer_question],
+        'global_tape': True
+    }
+
+    # Переходим в функцию просмотра ленты по тегам с дополнительными параметрами
+    await send_searching_questions(
+        message=message,
+        state=state,
+        my_response=my_response,
+        tag=data.get("tag", None),
+        another_key=f"user:{my_response['login']}:tag_queue_index"
         **actions
     )
 

@@ -12,6 +12,12 @@ async def get_question_controller(question_id: int):
     return await TopicService.get_question_service(question_id=question_id)
 
 
+# --- Получение вопросов по тегам --- #
+@router.get('/get_tag_questions')
+async def get_tag_questions_controller(tag: str):
+    return await TopicService.get_tag_questions_service(tag=tag)
+
+
 # --- Получение всех вопросов --- #
 @router.get('/get_all_questions')
 async def get_all_questions_controller():

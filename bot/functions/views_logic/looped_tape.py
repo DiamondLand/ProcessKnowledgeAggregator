@@ -18,12 +18,16 @@ from .queue import change_queue_index, get_last_user_id
 
 
 # --- Функция отправки вопросов --- #
-async def send_searching_questions(message: Message, state: FSMContext, my_response, set_index: bool = True, view_answers: bool = False,
-                                    edit: bool = False, vote: bool = False, create_answer: bool = False, global_tape: bool = True):
+async def send_searching_questions(message: Message, state: FSMContext, my_response, set_index: bool = True, view_answers: bool = False, tag: str = None,
+                                    edit: bool = False, vote: bool = False, create_answer: bool = False, global_tape: bool = True, another_key: str = None):
     async with httpx.AsyncClient() as client:
-        if global_tape:
+        if global_tape and tag:
             questions_response = await client.get(
                 f"{message.bot.config['SETTINGS']['backend_url']}get_all_questions"
+            )
+        elif tag:
+            questions_response = await client.get(
+                f"{message.bot.config['SETTINGS']['backend_url']}get_tag_questions?tag={tag}"
             )
         else:
             questions_response = await client.get(
@@ -35,7 +39,7 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
 
         if questions_data:
             my_queue_index_key = f"user:{my_response['login']}:my_queue_index"
-            queue_index_key = f"user:{my_response['login']}:queue_index"
+            queue_index_key = another_key if another_key and tag else f"user:{my_response['login']}:queue_index"
             
             # Получаем индекс вопроса для показа и обновляем id последнего
             get_index = await change_queue_index(

@@ -12,6 +12,10 @@ class TopicService:
     async def get_question_service(question_id: int):
         return await TopicQuections.get_or_none(id=question_id)
 
+    @staticmethod  # Получение вопросов по тегам
+    async def get_tag_questions_service(tag: str):
+        return await TopicQuections.filter(tag=tag).order_by('-votes').all()
+
     @staticmethod  # Получение всех вопросов
     async def get_all_questions_service():
         return await TopicQuections.filter().order_by('-votes').all()
@@ -111,7 +115,7 @@ class TopicService:
     async def update_answers_status_service(data: UpdateStatus):
         user = await User.get_or_none(login=data.login)
 
-        if user :
+        if user:
             response = await TopicAnswers.get_or_none(id=data.part_id)
 
             if response:
