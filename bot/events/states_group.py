@@ -22,8 +22,6 @@ class Searching(StatesGroup):
     tape_tag_questions = State()
     tape_answers = State()
 
-    view_answers = State()
-
     create_answer = State()
 
 

@@ -16,6 +16,12 @@ class UpdateQuestion(pydantic.BaseModel):
     question: Optional[str]
 
 
+class UpdateAnswer(pydantic.BaseModel):
+    answer_id: int
+    login: str
+    answer: str
+
+
 class CreateAnswer(pydantic.BaseModel):
     login: str
     question_id: int

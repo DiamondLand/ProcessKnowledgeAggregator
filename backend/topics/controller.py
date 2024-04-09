@@ -60,6 +60,12 @@ async def create_answer_controller(data: CreateAnswer):
     return await TopicService.create_answer_service(data=data)
 
 
+# --- Обновление ответа --- #
+@router.put('/update_answer')
+async def update_answer_controller(data: UpdateAnswer):
+    return await TopicService.update_answer_service(data=data)
+
+
 # --- Обновление количества голосов за вопрос --- #
 @router.put('/update_question_votes')
 async def update_question_votes_controller(data: UpdateVotes):

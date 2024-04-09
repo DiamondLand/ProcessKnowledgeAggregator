@@ -58,7 +58,7 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
 
             # Переход в ленту просмотра ответов
             if view_answers is True:
-                await state.set_state(Searching.view_answers)
+                await state.set_state(Searching.tape_answers)
 
                 data = await state.get_data()
                 data['question_id'] = last_question_id
@@ -120,7 +120,7 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
                     set_index=False
                 )
 
-            # :TODO: Если хотим отредактировать на вопрос
+            # Если хотим отредактировать на вопрос
             if edit is True:
                 await state.set_state(EditQuestionOrAnswer.edit_question)
 
@@ -145,7 +145,7 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
 
 
 # --- Функция отправки ответов --- #
-async def send_searching_answers(message: Message, state: FSMContext, question_id: int, my_response, set_index: bool = True,
+async def send_searching_answers(message: Message, state: FSMContext, question_id: int, my_response, edit: bool = False, set_index: bool = True,
                                 vote: bool = False, global_tape: bool = True):
     get_question = None
     async with httpx.AsyncClient() as client:
@@ -207,6 +207,21 @@ async def send_searching_answers(message: Message, state: FSMContext, question_i
                     question_id=question_id,
                     my_response=my_response,
                     set_index=False
+                )
+
+            # Если хотим отредактировать на вопрос
+            if edit is True:
+                await state.set_state(EditQuestionOrAnswer.edit_answer)
+
+                data = await state.get_data()
+                data['answer_id'] = last_answer_id
+                data['question_id'] = question_id
+                data['user_response'] = my_response
+                await state.update_data(data)
+
+                return await message.answer(
+                    text=f"<b>Текущий ответ:</b> <i>{answers_data[get_index]['answer']}</i>\n\nВведите новый вариант:",
+                    reply_markup=back_to_my_questions_kb()
                 )
 
             await send_answer_card(

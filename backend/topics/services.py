@@ -72,6 +72,16 @@ class TopicService:
             await user.user_answers.add(answer)
             return answer
 
+    @staticmethod  # Обновление ответа
+    async def update_answer_service(data: UpdateAnswer):
+        answer = await TopicAnswers.get_or_none(id=data.answer_id)
+        
+        if answer:
+            answer.answer = data.answer
+            await answer.save()
+            
+            return answer
+        
     @staticmethod  # Обновление количества голосов за вопрос
     async def update_question_votes_service(data: UpdateVotes):
         user = await User.get_or_none(login=data.login)

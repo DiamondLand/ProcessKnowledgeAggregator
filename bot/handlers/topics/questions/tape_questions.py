@@ -135,7 +135,7 @@ async def back_to_question_tape_func(message: Message, state: FSMContext):
     current_state = await state.get_state()
     if current_state is not None and\
     current_state != Searching.create_answer and\
-    current_state != Searching.view_answers and\
+    current_state != Searching.tape_answers and\
     current_state != EditQuestionOrAnswer.edit_question:
         await state.clear()
 

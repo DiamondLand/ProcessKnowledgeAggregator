@@ -63,7 +63,7 @@ async def create_question_choice(message: Message, state: FSMContext):
     )
 
 
-# --- Выбор тега -> финищ --- #
+# --- Выбор тега -> финиш --- #
 @router.message(CreateQuestion.create_question_tag)
 @check_authorized
 async def create_question_tag_choice(message: Message, state: FSMContext, get_user_response: dict):
@@ -125,7 +125,7 @@ async def edit_question_choice(message: Message, state: FSMContext):
     await state.set_state(EditQuestionOrAnswer.edit_question_tag)
 
 
-# --- Выбор тега -> финищ --- #
+# --- Выбор тега -> финиш --- #
 @router.message(EditQuestionOrAnswer.edit_question_tag)
 async def edit_question_tag_choice(message: Message, state: FSMContext):
     data = await state.get_data()
