@@ -77,7 +77,7 @@ class TopicService:
                 return {"message": "success"}
 
     @staticmethod  # Обновление оличества голосов за ответ
-    async def update_answers_votes_service(data: UpdateVotes):
+    async def update_answer_votes_service(data: UpdateVotes):
         user = await User.get_or_none(login=data.login)
         if user:
             response = await TopicAnswers.get_or_none(id=data.part_id)

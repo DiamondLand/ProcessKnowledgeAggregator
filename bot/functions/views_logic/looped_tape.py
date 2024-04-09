@@ -42,7 +42,7 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
                 message=message,
                 queue=len(questions_data),
                 key=queue_index_key if global_tape else my_queue_index_key,
-                set_index=False if create_answer or edit or view_answers or vote else set_index  # Принудительно не задаём новый индекс если хотим просто поличть last_id
+                set_index=False if view_answers or create_answer or vote or edit else set_index  # Принудительно не задаём новый индекс если хотим просто поличть last_id
             )
 
             # Получаем ID последнего просмотренного вопроса и обновялем
@@ -91,7 +91,7 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
 
             # Проголосовать за вопрос
             if vote is True:
-                key = f"vote:{my_response['login']}:{last_question_id}"
+                key = f"q_vote:{my_response['login']}:{last_question_id}"
 
                 if await vote_exists(message=message, key=key):
                     await remove_vote(message=message, key=key)
@@ -109,12 +109,12 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
                         'number': number
                     })
 
-                    return await send_searching_questions(
-                        message=message,
-                        state=state,
-                        my_response=my_response,
-                        set_index=False
-                    )
+                return await send_searching_questions(
+                    message=message,
+                    state=state,
+                    my_response=my_response,
+                    set_index=False
+                )
 
             # :TODO: Если хотим отредактировать на вопрос
             if edit is True:
@@ -177,9 +177,33 @@ async def send_searching_answers(message: Message, state: FSMContext, question_i
                 last_id=answers_data[get_index]['id']
             )
 
-            # :TODO: Если хотим отдать голос вопросу
+            # Проголосовать за ответ
             if vote is True:
-                ...
+                key = f"a_vote:{my_response['login']}:{last_answer_id}"
+
+                if await vote_exists(message=message, key=key):
+                    await remove_vote(message=message, key=key)
+                    await message.answer(text="💙 Голос за ответ убран!")
+                    number = -1
+                else:
+                    await set_vote(message=message, key=key)
+                    await message.answer(text="🤍 Голос за ответ отдан!")
+                    number = 1
+
+                async with httpx.AsyncClient() as client:
+                    await client.put(message.bot.config['SETTINGS']['backend_url'] + 'update_answer_votes', json={
+                        'login': my_response['login'],
+                        'part_id': last_answer_id,
+                        'number': number
+                    })
+
+                return await send_searching_answers(
+                    message=message,
+                    state=state,
+                    question_id=question_id,
+                    my_response=my_response,
+                    set_index=False
+                )
 
             await send_answer_card(
                 msg=message, 

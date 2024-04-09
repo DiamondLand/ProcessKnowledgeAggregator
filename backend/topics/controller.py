@@ -55,9 +55,9 @@ async def update_question_votes_controller(data: UpdateVotes):
 
 
 # --- Обновление количества голосов за ответ --- #
-@router.put('/update_answers_votes')
-async def update_answers_votes_controller(data: UpdateVotes):
-    return await TopicService.update_answers_votes_service(data=data)
+@router.put('/update_answer_votes')
+async def update_answer_votes_controller(data: UpdateVotes):
+    return await TopicService.update_answer_votes_service(data=data)
 
 
 # --- Обновление статуса вопроса --- #
