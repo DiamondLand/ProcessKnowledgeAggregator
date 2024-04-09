@@ -4,6 +4,7 @@ from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 
 from functions.card_to_send import send_question_card, send_answer_card
+from functions.redis_votes import set_vote, vote_exists, remove_vote
 
 from elements.keyboards.keyboards_profile import profile_kb
 from elements.keyboards.keyboards_searching import my_questions_kb, all_questions_kb, all_answers_kb, my_answers_kb
@@ -18,7 +19,7 @@ from .queue import change_queue_index, get_last_user_id
 
 # --- Функция отправки вопросов --- #
 async def send_searching_questions(message: Message, state: FSMContext, my_response, set_index: bool = True, view_answers: bool = False,
-                                    edit_question: bool = False, create_answer: bool = False, global_tape: bool = True):
+                                    edit: bool = False, vote: bool = False, create_answer: bool = False, global_tape: bool = True):
     async with httpx.AsyncClient() as client:
         if global_tape:
             questions_response = await client.get(
@@ -33,15 +34,15 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
         questions_data = questions_response.json()
 
         if questions_data:
-            my_queue_index_key = f"user:{message.from_user.id}:my_queue_index"
-            queue_index_key = f"user:{message.from_user.id}:queue_index"
+            my_queue_index_key = f"user:{my_response['login']}:my_queue_index"
+            queue_index_key = f"user:{my_response['login']}:queue_index"
             
             # Получаем индекс вопроса для показа и обновляем id последнего
             get_index = await change_queue_index(
                 message=message,
                 queue=len(questions_data),
                 key=queue_index_key if global_tape else my_queue_index_key,
-                set_index=False if create_answer or edit_question or view_answers else set_index  # Принудительно не задаём новый индекс если хотим просто поличть last_id
+                set_index=False if create_answer or edit or view_answers or vote else set_index  # Принудительно не задаём новый индекс если хотим просто поличть last_id
             )
 
             # Получаем ID последнего просмотренного вопроса и обновялем
@@ -50,7 +51,7 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
                 key=queue_index_key if global_tape else my_queue_index_key,
                 last_id=questions_data[get_index]['id']
             )
-            
+
             # Переход в ленту просмотра ответов
             if view_answers is True:
                 await state.set_state(Searching.view_answers)
@@ -73,7 +74,7 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
                     my_response=my_response,
                     global_tape=global_tape
                 )
-            
+
             # Ответ на вопрос
             if create_answer is True:
                 await state.set_state(Searching.create_answer)
@@ -88,8 +89,35 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
                     reply_markup=back_to_global_questions_kb() if global_tape else back_to_my_questions_kb()
                 )
 
+            # Проголосовать за вопрос
+            if vote is True:
+                key = f"vote:{my_response['login']}:{last_question_id}"
+
+                if await vote_exists(message=message, key=key):
+                    await remove_vote(message=message, key=key)
+                    await message.answer(text="💙 Голос за вопрос убран!")
+                    number = -1
+                else:
+                    await set_vote(message=message, key=key)
+                    await message.answer(text="🤍 Голос за вопрос отдан!")
+                    number = 1
+
+                async with httpx.AsyncClient() as client:
+                    await client.put(message.bot.config['SETTINGS']['backend_url'] + 'update_question_votes', json={
+                        'login': my_response['login'],
+                        'part_id': last_question_id,
+                        'number': number
+                    })
+
+                    return await send_searching_questions(
+                        message=message,
+                        state=state,
+                        my_response=my_response,
+                        set_index=False
+                    )
+
             # :TODO: Если хотим отредактировать на вопрос
-            if edit_question is True:
+            if edit is True:
                 await state.set_state(EditQuestionOrAnswer.edit_question)
 
                 data = await state.get_data()

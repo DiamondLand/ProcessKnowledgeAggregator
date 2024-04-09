@@ -35,10 +35,11 @@ async def profile_searching(message: Message, state: FSMContext, my_response: di
         await state.clear()
 
     actions = {
-        'edit_question': message.text in [edit_my_question],
         'view_answers': message.text in [view_answers_my_question, view_answers_question],
+        'edit': message.text in [edit_my_question],
+        'vote': message.text in [vote_question],
         'create_answer': message.text in [answer_my_question, answer_question],
-        'global_tape': message.text in [next_question, answer_question, view_answers_question]
+        'global_tape': message.text in [next_question, answer_question, view_answers_question, vote_question]
     }
 
     # Переходим в функцию просмотра ленты с дополнительными параметрами
