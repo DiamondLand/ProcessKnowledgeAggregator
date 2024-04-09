@@ -55,7 +55,7 @@ async def questions_searching(message: Message, state: FSMContext, my_response: 
 
 
 # --- Переход к вводу тега  --- #
-@router.message(Searching.tape_questions, F.text == tag_searching)
+@router.message( F.text == tag_searching)
 async def tag_searching_func(message: Message, state: FSMContext):
     await message.answer(
         text="Введите тег, по которому хотите осуществить поиск или выберите из распространённых тегов, предложеных по кнопкам ниже:",
@@ -100,7 +100,7 @@ async def questions_tag_write(message: Message, state: FSMContext, my_response: 
 @router.message(
     Searching.tape_tag_questions,
     (F.text == next_question) | (F.text == view_answers_question)
-    (F.text == answer_question) | (F.text == vote_question) | (F.text == tag_searching) 
+    (F.text == answer_question) | (F.text == vote_question) 
 )
 @anti_robot_check
 @check_authorized
@@ -126,6 +126,7 @@ async def questions_tag_searching(message: Message, state: FSMContext, my_respon
         another_key=f"user:{my_response['login']}:tag_queue_index",
         **actions
     )
+
 
 # --- Вернуться к просмотру вопросов --- #
 @router.message((F.text == back_to_my_questions) | (F.text == back_to_global_questions))
