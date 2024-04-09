@@ -147,12 +147,8 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
 # --- Функция отправки ответов --- #
 async def send_searching_answers(message: Message, state: FSMContext, question_id: int, my_response, edit: bool = False, set_index: bool = True,
                                 vote: bool = False, global_tape: bool = True):
-    get_question = None
     async with httpx.AsyncClient() as client:
         if global_tape:
-            get_question = await client.get(
-                f"{message.bot.config['SETTINGS']['backend_url']}get_question?question_id={question_id}"
-            )
             answers_response = await client.get(
                 f"{message.bot.config['SETTINGS']['backend_url']}get_all_question_answers?question_id={question_id}"
             )
@@ -161,90 +157,98 @@ async def send_searching_answers(message: Message, state: FSMContext, question_i
                 f"{message.bot.config['SETTINGS']['backend_url']}get_all_user_answers?login={my_response['login']}"
             )
 
-    if answers_response.status_code == 200:
-        answers_data = answers_response.json()
+            if answers_response.json():
+                question_id = answers_response.json()[0]['question_id']
 
-        if answers_data:
-            my_answers_queue_index_key = f"user:{message.from_user.id}:my_answers_queue_index"
-            answers_queue_index_key = f"user:{message.from_user.id}:answers_queue_index"
-            # Получаем индекс вопроса для показа и обновляем id последнего
-            get_index = await change_queue_index(
-                message=message,
-                queue=len(answers_data),
-                key=answers_queue_index_key if global_tape else my_answers_queue_index_key,
-                set_index=False if vote else set_index  # Принудительно не задаём новый индекс если хотим просто поличть last_id
+        if answers_response.status_code == 200:
+            get_question = await client.get(
+                f"{message.bot.config['SETTINGS']['backend_url']}get_question?question_id={question_id}"
             )
-            # Получаем ID последнего просмотренного ответа и обновялем
-            last_answer_id = await get_last_user_id(
-                message=message,
-                key=answers_queue_index_key if global_tape else my_answers_queue_index_key,
-                last_id=answers_data[get_index]['id']
-            )
+        else:
+            return await message.answer(text=server_error)
+        
 
-            # Проголосовать за ответ
-            if vote is True:
-                key = f"a_vote:{my_response['login']}:{last_answer_id}"
+    answers_data = answers_response.json()
 
-                if await vote_exists(message=message, key=key):
-                    await remove_vote(message=message, key=key)
-                    await message.answer(text="💙 Голос за ответ убран!")
-                    number = -1
-                else:
-                    await set_vote(message=message, key=key)
-                    await message.answer(text="🤍 Голос за ответ отдан!")
-                    number = 1
+    if answers_data:
+        my_answers_queue_index_key = f"user:{message.from_user.id}:my_answers_queue_index"
+        answers_queue_index_key = f"user:{message.from_user.id}:answers_queue_index"
+        # Получаем индекс вопроса для показа и обновляем id последнего
+        get_index = await change_queue_index(
+            message=message,
+            queue=len(answers_data),
+            key=answers_queue_index_key if global_tape else my_answers_queue_index_key,
+            set_index=False if vote else set_index  # Принудительно не задаём новый индекс если хотим просто поличть last_id
+        )
+        # Получаем ID последнего просмотренного ответа и обновялем
+        last_answer_id = await get_last_user_id(
+            message=message,
+            key=answers_queue_index_key if global_tape else my_answers_queue_index_key,
+            last_id=answers_data[get_index]['id']
+        )
 
-                async with httpx.AsyncClient() as client:
-                    await client.put(message.bot.config['SETTINGS']['backend_url'] + 'update_answer_votes', json={
-                        'login': my_response['login'],
-                        'part_id': last_answer_id,
-                        'number': number
-                    })
+        # Проголосовать за ответ
+        if vote is True:
+            key = f"a_vote:{my_response['login']}:{last_answer_id}"
 
-                return await send_searching_answers(
-                    message=message,
-                    state=state,
-                    question_id=question_id,
-                    my_response=my_response,
-                    set_index=False
-                )
+            if await vote_exists(message=message, key=key):
+                await remove_vote(message=message, key=key)
+                await message.answer(text="💙 Голос за ответ убран!")
+                number = -1
+            else:
+                await set_vote(message=message, key=key)
+                await message.answer(text="🤍 Голос за ответ отдан!")
+                number = 1
 
-            # Если хотим отредактировать на вопрос
-            if edit is True:
-                await state.set_state(EditQuestionOrAnswer.edit_answer)
+            async with httpx.AsyncClient() as client:
+                await client.put(message.bot.config['SETTINGS']['backend_url'] + 'update_answer_votes', json={
+                    'login': my_response['login'],
+                    'part_id': last_answer_id,
+                    'number': number
+                })
 
-                data = await state.get_data()
-                data['answer_id'] = last_answer_id
-                data['question_id'] = question_id
-                data['user_response'] = my_response
-                await state.update_data(data)
-
-                return await message.answer(
-                    text=f"<b>Текущий ответ:</b> <i>{answers_data[get_index]['answer']}</i>\n\nВведите новый вариант:",
-                    reply_markup=back_to_my_questions_kb()
-                )
-
-            await send_answer_card(
-                msg=message, 
-                answers_data=answers_data[get_index],
-                question=get_question.json()['question'] if get_question else None
-            )
-        else:  
-            # Задаём новую стадию просмотра вопросов
-            await state.set_state(Searching.tape_questions)
-
-            # Возвращаемся к просмотру ленты
-            await message.answer(
-                text="<b>Ответов на вопрос пока что нет 😉!</b>\n\nВы можете оставить его первым!",
-                reply_markup=all_questions_kb() if global_tape else my_questions_kb()
-            )
-
-            await send_searching_questions(
+            return await send_searching_answers(
                 message=message,
                 state=state,
+                question_id=question_id,
                 my_response=my_response,
-                set_index=False,
-                global_tape=global_tape
+                set_index=False
             )
-    else:
-        await message.answer(text=server_error, reply_markup=profile_kb())
+
+        # Если хотим отредактировать на вопрос
+        if edit is True:
+            await state.set_state(EditQuestionOrAnswer.edit_answer)
+
+            data = await state.get_data()
+            data['answer_id'] = last_answer_id
+            data['question_id'] = question_id
+            data['user_response'] = my_response
+            await state.update_data(data)
+
+            return await message.answer(
+                text=f"<b>Текущий ответ:</b> <i>{answers_data[get_index]['answer']}</i>\n\nВведите новый вариант:",
+                reply_markup=back_to_my_questions_kb()
+            )
+        
+        await send_answer_card(
+            msg=message, 
+            answers_data=answers_data[get_index],
+            question=get_question.json()['question']
+        )
+    else:  
+        # Задаём новую стадию просмотра вопросов
+        await state.set_state(Searching.tape_questions)
+
+        # Возвращаемся к просмотру ленты
+        await message.answer(
+            text="<b>Ответов на вопрос пока что нет 😉!</b>\n\nВы можете оставить его первым!",
+            reply_markup=all_questions_kb() if global_tape else my_questions_kb()
+        )
+
+        await send_searching_questions(
+            message=message,
+            state=state,
+            my_response=my_response,
+            set_index=False,
+            global_tape=global_tape
+        )

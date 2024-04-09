@@ -32,7 +32,36 @@ class TopicService:
         user = await User.get_or_none(login=login)
 
         if user:
-            return await TopicAnswers.filter(login=user).order_by('-votes').all()
+            # Получаем все ответы пользователя, отсортированные по количеству голосов
+            responses = await TopicAnswers.filter(login=user).order_by('-votes').all()
+
+            # Список для хранения результатов
+            results = []
+
+            for response in responses:
+                # Получаем все связанные вопросы для текущего ответа
+                related_questions = await response.question.all()
+                
+                # Извлекаем ID первого вопроса из связанных вопросов
+                if related_questions:
+                    question_id = related_questions[0].id
+                else:
+                    question_id = None
+                
+                # Создаем словарь с информацией об ответе и его связанном вопросе
+                result_data = {
+                    'id': response.id,
+                    'question_id': question_id,
+                    'status': response.status,
+                    'votes': response.votes,
+                    'created_at': response.created_at.isoformat(),
+                    'answer': response.answer
+                }
+
+                # Добавляем созданный словарь в список результатов
+                results.append(result_data)
+
+            return results
 
     @staticmethod  # Получение всех ответов на вопрос
     async def get_all_question_answers_service(question_id: int):
