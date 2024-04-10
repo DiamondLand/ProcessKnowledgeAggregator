@@ -138,7 +138,7 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
             if subscribe is True:
                 async with httpx.AsyncClient() as client:
                     question_to_sub_response = await client.get(
-                        f"{message.bot.config['SETTINGS']['backend_url']}get_question?question_id={last_question_id}"
+                        f"{message.bot.config['SETTINGS']['backend_url']}get_question?question_id={last_question_id if last_question_id != 0 else questions_data[get_index]['id']}"
                     )
                     if question_to_sub_response.status_code == 200 and question_to_sub_response.json():
                         tag_to_sub = question_to_sub_response.json()['tag']

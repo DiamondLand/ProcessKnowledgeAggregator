@@ -106,7 +106,7 @@ async def questions_tag_write(message: Message, state: FSMContext, my_response: 
 @router.message(
     Searching.tape_tag_questions,
     (F.text == next_question) | (F.text == view_answers_question)
-    (F.text == answer_question) | (F.text == vote_question) 
+    (F.text == answer_question) | (F.text == vote_question) | (F.text == subscribe_question)
 )
 @anti_robot_check
 @check_authorized
@@ -121,7 +121,8 @@ async def questions_tag_searching(message: Message, state: FSMContext, my_respon
     actions = {
         'view_answers': message.text in [view_answers_question],
         'vote': message.text in [vote_question],
-        'create_answer': message.text in [answer_question]
+        'create_answer': message.text in [answer_question],
+        'subscribe': message.text in [subscribe_question]
     }
 
     await send_searching_questions(
