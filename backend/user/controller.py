@@ -32,7 +32,7 @@ async def authorization_user_controller(data: AuthorizationUserScheme):
 
 
 # --- Подписка на тег --- #
-@router.put('/subscribe_tag')
+@router.post('/subscribe_tag')
 async def subscribe_tag_controller(data: SubsctribeTagScheme):
     return await UserService.subscribe_tag_service(data=data)
 

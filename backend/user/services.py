@@ -86,12 +86,10 @@ class UserService:
         user = await User.get_or_none(login=data.login)
 
         if user:
-            response = await UserSubsribes.filter(login=user, tag=data.tag).first()
-
-            if response is None:
-                return await UserSubsribes.create(login=user, tag=data.tag)
+            if await UserSubsribes.filter(login_id=user.login, tag=data.tag).first():
+                return None
             else:
-                return {'message': 'already subscribe'}
+                return await UserSubsribes.create(login=user, tag=data.tag)
 
     @staticmethod  # Отпписка от тега
     async def unsubscribe_tag_service(login: str, tag: str):

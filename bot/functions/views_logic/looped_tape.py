@@ -46,7 +46,7 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
                 message=message,
                 queue=len(questions_data),
                 key=queue_index_key if global_tape else my_queue_index_key,
-                set_index=False if view_answers or create_answer or vote or edit else set_index  # Принудительно не задаём новый индекс если хотим просто поличть last_id
+                set_index=False if view_answers or create_answer or vote or edit or subscribe else set_index  # Принудительно не задаём новый индекс если хотим просто поличть last_id
             )
 
             # Получаем ID последнего просмотренного вопроса и обновялем
@@ -144,19 +144,19 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
                         tag_to_sub = question_to_sub_response.json()['tag']
 
                         # Подписываемся на тег
-                        subscribe_tag_response = await client.put(message.bot.config['SETTINGS']['backend_url'] + 'subscribe_tag', json={
+                        subscribe_tag_response = await client.post(message.bot.config['SETTINGS']['backend_url'] + 'subscribe_tag', json={
                             'login': my_response['login'],
                             'tag': tag_to_sub
                         })
                         if subscribe_tag_response.status_code == 200:
                             # Если подписан на тег, то отписываемся
-                            if subscribe_tag_response.json()['message'] and subscribe_tag_response.json()['message'] == 'already subscribe':
+                            if subscribe_tag_response.json():
+                                await message.answer(text=f"🤍 Вы подписались на тег <i>{tag_to_sub}</i>!")
+                            else:
                                 subscribe_tag_response = await client.delete(
                                     f"{message.bot.config['SETTINGS']['backend_url']}unsubscribe_tag?login={my_response['login']}&tag={tag_to_sub}"
                                 )
                                 await message.answer(text=f"💙 Вы отписались от тега <i>{tag_to_sub}</i>!")
-                            else:
-                                await message.answer(text=f"🤍 Вы подписались на тег <i>{tag_to_sub}</i>!")
 
                             return await send_searching_questions(
                                 message=message,

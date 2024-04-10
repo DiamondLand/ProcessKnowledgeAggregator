@@ -19,7 +19,7 @@ class User(Model):
 class UserSubsribes(Model):
     id = fields.IntField(pk=True)
   
-    login = fields.OneToOneField(
+    login = fields.ForeignKeyField(
         'models.User', to_field='login', on_delete='CASCADE'
     )
     tag = fields.CharField(max_length=300)
