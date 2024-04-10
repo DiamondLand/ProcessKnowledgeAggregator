@@ -137,7 +137,33 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
 
             # Подписаться на ответы вопроса
             if answer_subscribe is True:
-                ...
+                key = f"sub:{my_response['login']}:{last_question_id}"
+
+                if await vote_exists(message=message, key=key):
+                    await remove_vote(message=message, key=key)
+                    await message.answer(text="💙 Вы отписались от вопроса!")
+                    status = False
+                else:
+                    await set_vote(message=message, key=key)
+                    await message.answer(text="🤍 Вы подписались на вопрос!")
+                    status = True
+
+                async with httpx.AsyncClient() as client:
+                    subscribe_tag_response = await client.put(message.bot.config['SETTINGS']['backend_url'] + 'subscribe_answers', json={
+                        'login': my_response['login'],
+                        'part_id': last_question_id,
+                        'status': status
+                    })
+                    
+                    if subscribe_tag_response.status_code == 200:
+                        return await send_searching_questions(
+                            message=message,
+                            state=state,
+                            my_response=my_response,
+                            set_index=False
+                        )
+                    else:
+                        return await message.answer(text=server_error)
                     
             # Подписаться на тег
             if subscribe is True:
