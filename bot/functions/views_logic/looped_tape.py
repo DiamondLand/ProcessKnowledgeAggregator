@@ -47,7 +47,7 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
                 message=message,
                 queue=len(questions_data),
                 key=queue_index_key if global_tape else my_queue_index_key,
-                set_index=False if view_answers or create_answer or vote or edit or subscribe else set_index  # Принудительно не задаём новый индекс если хотим просто поличть last_id
+                set_index=False if view_answers or create_answer or vote or edit or subscribe or answer_subscribe else set_index  # Принудительно не задаём новый индекс если хотим просто поличть last_id
             )
 
             # Получаем ID последнего просмотренного вопроса и обновялем
@@ -160,7 +160,8 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
                             message=message,
                             state=state,
                             my_response=my_response,
-                            set_index=False
+                            set_index=False,
+                            global_tape=False
                         )
                     else:
                         return await message.answer(text=server_error)
