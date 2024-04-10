@@ -3,8 +3,13 @@ from fastapi import APIRouter
 from .schemas import CreateUserScheme, AddToBlackListScheme, ChangeStatusScheme, AuthorizationUserScheme, SubsctribeTagScheme
 from .services import UserService
 
-
 router = APIRouter()
+
+
+# --- Получение всех пользователей --- #
+@router.get('/get_users')
+async def get_users_controller():
+    return await UserService.get_users_service()
 
 
 # --- Получение пользователя --- #

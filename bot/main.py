@@ -1,11 +1,14 @@
 import configparser
 import asyncio
+import aioschedule
 
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.redis import RedisStorage
 
 from loguru import logger
+
+from functions.account.account_send_sub_questions import send_tags_on_subscribe
 
 from events import errors_handler, profile_events
 from handlers.commands import commands_handler
@@ -30,7 +33,7 @@ async def main():
 
     dp.include_routers(
         # Должна быть первым для получения ошибок со всех роутеров
-        errors_handler.router, 
+        errors_handler.router,
 
         # Пользовательское
         profile_events.router,
@@ -51,5 +54,18 @@ async def main():
     await dp.start_polling(bot)
 
 
+async def scheduler():
+    aioschedule.every().day.at("10:00").do(send_tags_on_subscribe, bot)
+
+    while True:
+        await aioschedule.run_pending()
+        await asyncio.sleep(1)
+
+
+async def run_both():
+    tasks = [asyncio.create_task(scheduler()), asyncio.create_task(main())]
+    await asyncio.wait(tasks)
+
+
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(run_both())

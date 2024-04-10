@@ -108,6 +108,7 @@ async def create_answer(message: Message, state: FSMContext):
            get_question_response = await client.get(
                f"{message.bot.config['SETTINGS']['backend_url']}get_question?question_id={question_id}"
             )
+
         if get_question_response.status_code == 200 and get_question_response.json():
             if get_question_response.json()['is_subscribe'] is True:
                 get_user_response = await check_account_login(

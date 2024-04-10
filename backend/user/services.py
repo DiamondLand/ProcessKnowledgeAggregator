@@ -6,6 +6,24 @@ from .schemas import CreateUserScheme, AddToBlackListScheme, ChangeStatusScheme,
 
 class UserService:
 
+    @staticmethod  # Получение всех пользователей
+    async def get_users_service():
+        users = await User.all()
+        data_list = []
+        for user in users:
+            subscribes_entries = await UserSubsribes.filter(login=user.login).all()
+            statistic_entry = await UserStatistic.get_or_none(login=user.login)
+            privileges_entry = await UserPrivileges.get_or_none(login=user.login)
+            blacklist_entry = await BlackList.get_or_none(login=user.login)
+            data_list.append({
+                "user_info": user,
+                "user_subsribes": subscribes_entries,
+                "user_statistic": statistic_entry,
+                "user_privileges": privileges_entry,
+                "blacklist_info": blacklist_entry
+            })
+        return data_list
+    
     @staticmethod  # Получение пользователя
     async def get_user_service(user_id: int):
         user = await User.get_or_none(user_id=user_id)
