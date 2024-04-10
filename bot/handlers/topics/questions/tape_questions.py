@@ -44,7 +44,8 @@ async def questions_searching(message: Message, state: FSMContext, my_response: 
         'edit': message.text in [edit_my_question],
         'vote': message.text in [vote_question],
         'create_answer': message.text in [answer_my_question, answer_question],
-        'subscribe': message.text in [subscribe_my_question, subscribe_question],
+        'subscribe': message.text in [subscribe_question],
+        'answer_subscribe': message.text in [subscribe_my_question],
         'global_tape': message.text in [
             next_question, view_answers_question, 
             answer_question, vote_question, subscribe_question

@@ -41,13 +41,13 @@ class TopicService:
             for response in responses:
                 # Получаем все связанные вопросы для текущего ответа
                 related_questions = await response.question.all()
-                
+
                 # Извлекаем ID первого вопроса из связанных вопросов
                 if related_questions:
                     question_id = related_questions[0].id
                 else:
                     question_id = None
-                
+
                 # Создаем словарь с информацией об ответе и его связанном вопросе
                 result_data = {
                     'id': response.id,
@@ -78,16 +78,16 @@ class TopicService:
             question = await TopicQuections.create(tag=data.tag, question=data.question)
             await user.user_question.add(question)
             return question
-    
+
     @staticmethod  # Обновление вопроса
     async def update_question_service(data: UpdateQuestion):
         question = await TopicQuections.get_or_none(id=data.question_id)
-        
+
         if question:
             question.question = data.question
             question.tag = data.tag
             await question.save()
-            
+
             return question
 
     @staticmethod  # Создание ответа
@@ -104,13 +104,23 @@ class TopicService:
     @staticmethod  # Обновление ответа
     async def update_answer_service(data: UpdateAnswer):
         answer = await TopicAnswers.get_or_none(id=data.answer_id)
-        
+
         if answer:
             answer.answer = data.answer
             await answer.save()
-            
+
             return answer
-        
+
+    @staticmethod  # Изменение подписки на ответы вопроса
+    async def subscribe_answers_service(data: UpdateStatus):
+        answer = await TopicQuections.get_or_none(id=data.part_id)
+
+        if answer:
+            answer.is_subscribe = data.status
+            await answer.save()
+
+            return answer
+
     @staticmethod  # Обновление количества голосов за вопрос
     async def update_question_votes_service(data: UpdateVotes):
         user = await User.get_or_none(login=data.login)

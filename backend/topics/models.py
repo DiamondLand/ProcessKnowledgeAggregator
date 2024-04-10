@@ -17,6 +17,7 @@ class TopicQuections(Model):
     created_at = fields.DatetimeField(auto_now=True)
 
     status = fields.BooleanField(default=False)
+    is_subscribe = fields.BooleanField(default=False)
 
 
 # --- Таблица ответов. Связь с `Quections` и `User` --- #

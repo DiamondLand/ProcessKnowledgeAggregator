@@ -66,6 +66,12 @@ async def update_answer_controller(data: UpdateAnswer):
     return await TopicService.update_answer_service(data=data)
 
 
+# --- Изменение подписки на ответы вопроса --- #
+@router.put('/subscribe_answers')
+async def subscribe_answers_controller(data: UpdateStatus):
+    return await TopicService.subscribe_answers_service(data=data)
+
+
 # --- Обновление количества голосов за вопрос --- #
 @router.put('/update_question_votes')
 async def update_question_votes_controller(data: UpdateVotes):

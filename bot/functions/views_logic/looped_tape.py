@@ -19,7 +19,8 @@ from .queue import change_queue_index, get_last_user_id
 
 # --- Функция отправки вопросов --- #
 async def send_searching_questions(message: Message, state: FSMContext, my_response, set_index: bool = True, view_answers: bool = False, tag: str = None, edit: bool = False, 
-                                    vote: bool = False, create_answer: bool = False, subscribe: bool = False, global_tape: bool = True, another_key: str = None):
+                                    vote: bool = False, create_answer: bool = False, answer_subscribe: bool = False, subscribe: bool = False, 
+                                    global_tape: bool = True, another_key: str = None):
     async with httpx.AsyncClient() as client:
         if global_tape and tag is None:
             questions_response = await client.get(
@@ -134,6 +135,10 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
                     reply_markup=back_to_my_questions_kb()
                 )
 
+            # Подписаться на ответы вопроса
+            if answer_subscribe is True:
+                ...
+                    
             # Подписаться на тег
             if subscribe is True:
                 async with httpx.AsyncClient() as client:
