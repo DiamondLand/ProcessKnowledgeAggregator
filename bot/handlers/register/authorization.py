@@ -67,7 +67,7 @@ async def authorization_password(message: Message, state: FSMContext):
         login=data.get('login', ''),
         password=cleaned_text
     )
-    # * .json() -> [{'user_info'}: ..., {'user_statistic'}: ..., {'user_privileges'}: ..., {'blacklist_info'}: ...]
+    # * .json() -> [{'user_info'}: ..., {'user_subsribes'}: ..., {'user_statistic'}: ..., {'user_privileges'}: ..., {'blacklist_info'}: ...]
     if get_user_response.status_code == 200:
         if get_user_response.json()['user_info']:
             # Используем префаб проверки на блокировку
@@ -78,7 +78,7 @@ async def authorization_password(message: Message, state: FSMContext):
                 get_user_response=get_user_response
             )
             # * [server_response, None or message]
-            # * server_response.json() -> {'user_info'}: ..., {'user_statistic'}: ..., {'user_privileges'}: ..., {'blacklist_info'}: ...
+            # * server_response.json() -> {'user_info'}: ..., {'user_subsribes'}: ..., {'user_subsribes'}: ..., {'user_statistic'}: ..., {'user_privileges'}: ..., {'blacklist_info'}: ...
 
             # Если префаб ничего не вернул (препядствий для пользователя нет)
             if ban_status[1] is None:

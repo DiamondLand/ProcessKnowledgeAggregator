@@ -124,7 +124,7 @@ async def finish_registration(callback: CallbackQuery, state: FSMContext):# -
         return await callback.message.answer(text=no_state)
 
     get_user_response = await check_account(config=callback.bot.config, user_id=callback.from_user.id)
-    # * .json() -> [{'user_info'}: ..., {'user_statistic'}: ..., {'user_privileges'}: ..., {'blacklist_info'}: ...]
+    # * .json() -> [{'user_info'}: ..., {'user_subsribes'}: ..., {'user_statistic'}: ..., {'user_privileges'}: ..., {'blacklist_info'}: ...]
     
     # Используем префаб проверки на блокировку
     ban_status = await prefab_account_blacklist(

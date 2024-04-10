@@ -15,7 +15,7 @@ def check_authorized(func):
     @wraps(func)
     async def wrapper(message: Message, state: FSMContext, *args, **kwargs):
         get_user_response = await check_account(config=message.bot.config, user_id=message.from_user.id)
-        # * .json() -> [{'user_info'}: ..., {'user_statistic'}: ..., {'user_privileges'}: ..., {'blacklist_info'}: ...]
+        # * .json() -> [{'user_info'}: ..., {'user_subsribes'}: ..., {'user_statistic'}: ..., {'user_privileges'}: ..., {'blacklist_info'}: ...]
 
         if get_user_response.status_code == 200:
             # Используем префаб проверки на блокировку
@@ -26,7 +26,7 @@ def check_authorized(func):
                 get_user_response=get_user_response
             )
             # * [server_response, None or message]
-            # * server_response.json() -> {'user_info'}: ..., {'user_statistic'}: ..., {'user_privileges'}: ..., {'blacklist_info'}: ...
+            # * server_response.json() -> {'user_info'}: ..., {'user_subsribes'}: ..., {'user_statistic'}: ..., {'user_privileges'}: ..., {'blacklist_info'}: ...
             
             # Используем префаб проверки на блокировку
             authorized_check = await prefab_account_check_authorized(
@@ -35,7 +35,7 @@ def check_authorized(func):
                 get_user_response=get_user_response
             )
             # * [server_response, None or message]
-            # * server_response.json() -> {'user_info'}: ..., {'user_statistic'}: ..., {'user_privileges'}: ..., {'blacklist_info'}: ...
+            # * server_response.json() -> {'user_info'}: ..., {'user_subsribes'}: ..., {'user_statistic'}: ..., {'user_privileges'}: ..., {'blacklist_info'}: ...
 
             # Если префабы ничего не вернули, то делаем вызов обработчика команды
             if ban_status[1] is None and authorized_check[1] is None:

@@ -12,7 +12,8 @@ from elements.keyboards.keyboards_searching import my_questions_kb, all_question
 from elements.keyboards.keyboards_questions import tags_to_question_kb
 from elements.keyboards.keyboards_profile import profile_kb
 from elements.keyboards.text_on_kb import (next_my_question, next_question, view_answers_my_question, view_answers_question, tag_searching,
-                                           answer_my_question, answer_question, edit_my_question, vote_question, back_to_my_questions, back_to_global_questions)
+                                           answer_my_question, answer_question, edit_my_question, vote_question, back_to_my_questions, back_to_global_questions,
+                                           subscribe_my_question, subscribe_question)
 
 from elements.answers import no_state
 
@@ -27,7 +28,8 @@ router = Router()
     (F.text == next_my_question) | (F.text == next_question) |
     (F.text == view_answers_my_question) | (F.text == view_answers_question) |
     (F.text == answer_my_question) | (F.text == answer_question) |
-    (F.text == edit_my_question) | (F.text == vote_question)
+    (F.text == edit_my_question) | (F.text == vote_question) |
+    (F.text == subscribe_my_question) | (F.text == subscribe_question)
 )
 @anti_robot_check
 @check_authorized
@@ -42,7 +44,11 @@ async def questions_searching(message: Message, state: FSMContext, my_response: 
         'edit': message.text in [edit_my_question],
         'vote': message.text in [vote_question],
         'create_answer': message.text in [answer_my_question, answer_question],
-        'global_tape': message.text in [next_question, answer_question, view_answers_question, vote_question]
+        'subscribe': message.text in [subscribe_my_question, subscribe_question],
+        'global_tape': message.text in [
+            next_question, view_answers_question, 
+            answer_question, vote_question, subscribe_question
+        ]
     }
 
     # Переходим в функцию просмотра ленты с дополнительными параметрами

@@ -18,8 +18,8 @@ from .queue import change_queue_index, get_last_user_id
 
 
 # --- Функция отправки вопросов --- #
-async def send_searching_questions(message: Message, state: FSMContext, my_response, set_index: bool = True, view_answers: bool = False, tag: str = None,
-                                    edit: bool = False, vote: bool = False, create_answer: bool = False, global_tape: bool = True, another_key: str = None):
+async def send_searching_questions(message: Message, state: FSMContext, my_response, set_index: bool = True, view_answers: bool = False, tag: str = None, edit: bool = False, 
+                                    vote: bool = False, create_answer: bool = False, subscribe: bool = False, global_tape: bool = True, another_key: str = None):
     async with httpx.AsyncClient() as client:
         if global_tape and tag is None:
             questions_response = await client.get(
@@ -39,7 +39,7 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
 
         if questions_data:
             my_queue_index_key = f"user:{my_response['login']}:my_queue_index"
-            queue_index_key = another_key if another_key and tag else f"user:{my_response['login']}:queue_index"
+            queue_index_key = another_key if another_key and tag and subscribe else f"user:{my_response['login']}:queue_index"
             
             # Получаем индекс вопроса для показа и обновляем id последнего
             get_index = await change_queue_index(
@@ -133,6 +133,41 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
                     text=f"<b>Текущий вопрос:</b> <i>{questions_data[get_index]['question']}</i>\n\nВведите новый вариант:",
                     reply_markup=back_to_my_questions_kb()
                 )
+
+            # Подписаться на тег
+            if subscribe is True:
+                async with httpx.AsyncClient() as client:
+                    question_to_sub_response = await client.get(
+                        f"{message.bot.config['SETTINGS']['backend_url']}get_question?question_id={last_question_id}"
+                    )
+                    if question_to_sub_response.status_code == 200 and question_to_sub_response.json():
+                        tag_to_sub = question_to_sub_response.json()['tag']
+
+                        # Подписываемся на тег
+                        subscribe_tag_response = await client.put(message.bot.config['SETTINGS']['backend_url'] + 'subscribe_tag', json={
+                            'login': my_response['login'],
+                            'tag': tag_to_sub
+                        })
+                        if subscribe_tag_response.status_code == 200:
+                            # Если подписан на тег, то отписываемся
+                            if subscribe_tag_response.json()['message'] and subscribe_tag_response.json()['message'] == 'already subscribe':
+                                subscribe_tag_response = await client.delete(
+                                    f"{message.bot.config['SETTINGS']['backend_url']}unsubscribe_tag?login={my_response['login']}&tag={tag_to_sub}"
+                                )
+                                await message.answer(text=f"💙 Вы отписались от тега <i>{tag_to_sub}</i>!")
+                            else:
+                                await message.answer(text=f"🤍 Вы подписались на тег <i>{tag_to_sub}</i>!")
+
+                            return await send_searching_questions(
+                                message=message,
+                                state=state,
+                                my_response=my_response,
+                                set_index=False
+                            )
+                        else:
+                            return await message.answer(text=server_error)
+                    else:
+                        return await message.answer(text=server_error)
 
             await send_question_card(
                 msg=message,

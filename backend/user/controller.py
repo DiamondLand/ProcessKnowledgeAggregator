@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from .schemas import CreateUserScheme, AddToBlackListScheme, ChangeStatusScheme, AuthorizationUserScheme
+from .schemas import CreateUserScheme, AddToBlackListScheme, ChangeStatusScheme, AuthorizationUserScheme, SubsctribeTagScheme
 from .services import UserService
 
 
@@ -29,6 +29,18 @@ async def create_user_controller(data: CreateUserScheme):
 @router.put('/authorization_user')
 async def authorization_user_controller(data: AuthorizationUserScheme):
     return await UserService.authorization_user_service(data=data)
+
+
+# --- Подписка на тег --- #
+@router.put('/subscribe_tag')
+async def subscribe_tag_controller(data: SubsctribeTagScheme):
+    return await UserService.subscribe_tag_service(data=data)
+
+
+# --- Отписка от тега --- #
+@router.delete('/unsubscribe_tag')
+async def unsubscribe_tag_controller(login: str, tag: str):
+    return await UserService.unsubscribe_tag_service(login=login, tag=tag)
 
 
 # --- Удаление пользователя --- #

@@ -19,6 +19,11 @@ class AddToBlackListScheme(pydantic.BaseModel):
     reason: str
 
 
+class SubsctribeTagScheme(pydantic.BaseModel):
+    login: str
+    tag: str
+
+
 class ChangeStatusScheme(pydantic.BaseModel):
     login: str
     status: bool

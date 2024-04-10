@@ -15,6 +15,17 @@ class User(Model):
     created_at = fields.DatetimeField(auto_now=True)
 
 
+# --- Таблица пользователей. Связь с `User` --- #
+class UserSubsribes(Model):
+    id = fields.IntField(pk=True)
+  
+    login = fields.OneToOneField(
+        'models.User', to_field='login', on_delete='CASCADE'
+    )
+    tag = fields.CharField(max_length=300)
+
+
+
 # --- Таблица чёрного списка --- #
 class BlackList(Model):
     id = fields.IntField(pk=True)
