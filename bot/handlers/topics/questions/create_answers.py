@@ -8,6 +8,7 @@ from aiogram.fsm.context import FSMContext
 from decorators.profile_decorator import anti_robot_check
 
 from functions.views_logic.looped_tape import send_searching_answers
+from functions.account.account_responses import check_account_login
 
 from elements.keyboards.keyboards_searching import all_answers_kb, my_answers_kb
 from elements.keyboards.keyboards_profile import profile_kb
@@ -101,6 +102,26 @@ async def create_answer(message: Message, state: FSMContext):
             my_response=get_user_response_json,
             global_tape=global_tape
         )
+
+        # Отправляем сообщение автору
+        async with httpx.AsyncClient() as client:
+           get_question_response = await client.get(
+               f"{message.bot.config['SETTINGS']['backend_url']}get_question?question_id={question_id}"
+            )
+        if get_question_response.status_code == 200 and get_question_response.json():
+            if get_question_response.json()['is_subscribe'] is True:
+                get_user_response = await check_account_login(
+                    config=message.bot.config,
+                    login=get_question_response.json()['login_id']
+                )
+                # * .json() -> [{'user_info'}: ..., {'user_subsribes'}: ..., {'user_statistic'}: ..., {'user_privileges'}: ..., {'blacklist_info'}: ...]
+
+                await message.bot.send_message(
+                    chat_id=get_user_response.json()['user_info']['user_id'],
+                    text=f"<b>😉 Новый ответ!</b>\n\
+                        \nНа ваш вопрос: <i>{get_question_response.json()['question']}</i> поступил ответ от <code>{get_user_response_json['login']}</code>:\
+                        \n\n{cleaned_text}"
+                )
     else:
         await message.answer(text=server_error)
 

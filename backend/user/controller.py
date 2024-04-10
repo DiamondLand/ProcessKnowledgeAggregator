@@ -14,6 +14,12 @@ async def get_user_controller(user_id: int):
 
 
 # --- Получение пользователя по логину --- #
+@router.get('/get_login')
+async def get_login_controller(login: str):
+    return await UserService.get_login_service(login=login)
+
+
+# --- Получение пользователя по логину и паролю --- #
 @router.get('/get_account')
 async def get_account_controller(login: str, password: str):
     return await UserService.get_account_service(login=login, password=password)

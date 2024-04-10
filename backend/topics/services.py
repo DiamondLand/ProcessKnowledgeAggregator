@@ -2,30 +2,30 @@ import random
 
 from user.models import User
 from userStatistic.models import UserStatistic
-from .models import TopicQuections, TopicAnswers
+from .models import TopicQuestions,  TopicAnswers
 from .schemas import *
 
 
 class TopicService:
 
     @staticmethod  # Получение вопроса
-    async def get_question_service(question_id: int):
-        return await TopicQuections.get_or_none(id=question_id)
+    async def get_question_service(question_id: int): 
+        return await TopicQuestions.filter(id=question_id).first().prefetch_related('login')
 
     @staticmethod  # Получение вопросов по тегам
     async def get_tag_questions_service(tag: str):
-        return await TopicQuections.filter(tag=tag).order_by('-votes').all()
+        return await TopicQuestions.filter(tag=tag).order_by('-votes').all()
 
     @staticmethod  # Получение всех вопросов
     async def get_all_questions_service():
-        return await TopicQuections.filter().order_by('-votes').all()
+        return await TopicQuestions.filter().order_by('-votes').all()
 
     @staticmethod  # Получение всех вопросов пользователя
     async def get_all_user_questions_service(login: str):
         user = await User.get_or_none(login=login)
 
         if user:
-            return await TopicQuections.filter(login=user).order_by('-votes').all()
+            return await TopicQuestions.filter(login_id=user.login).order_by('-votes').all()
 
     @staticmethod  # Получение всех ответов пользователя
     async def get_all_user_answers_service(login: str):
@@ -65,7 +65,7 @@ class TopicService:
 
     @staticmethod  # Получение всех ответов на вопрос
     async def get_all_question_answers_service(question_id: int):
-        question = await TopicQuections.get_or_none(id=question_id)
+        question = await TopicQuestions.get_or_none(id=question_id)
 
         if question:
             return await TopicAnswers.filter(question=question).order_by('-votes').all()
@@ -75,13 +75,12 @@ class TopicService:
         user = await User.get_or_none(login=data.login)
 
         if user:
-            question = await TopicQuections.create(tag=data.tag, question=data.question)
-            await user.user_question.add(question)
+            question = await TopicQuestions.create(login=user, tag=data.tag, question=data.question)
             return question
 
     @staticmethod  # Обновление вопроса
     async def update_question_service(data: UpdateQuestion):
-        question = await TopicQuections.get_or_none(id=data.question_id)
+        question = await TopicQuestions.get_or_none(id=data.question_id)
 
         if question:
             question.question = data.question
@@ -93,7 +92,7 @@ class TopicService:
     @staticmethod  # Создание ответа
     async def create_answer_service(data: CreateAnswer):
         user = await User.get_or_none(login=data.login)
-        question = await TopicQuections.get_or_none(id=data.question_id)
+        question = await TopicQuestions.get_or_none(id=data.question_id)
 
         if user and question:
             answer = await TopicAnswers.create(answer=data.answer)
@@ -113,7 +112,7 @@ class TopicService:
 
     @staticmethod  # Изменение подписки на ответы вопроса
     async def subscribe_answers_service(data: UpdateStatus):
-        answer = await TopicQuections.get_or_none(id=data.part_id)
+        answer = await TopicQuestions.get_or_none(id=data.part_id)
 
         if answer:
             answer.is_subscribe = data.status
@@ -126,7 +125,7 @@ class TopicService:
         user = await User.get_or_none(login=data.login)
 
         if user:
-            response = await TopicQuections.get_or_none(id=data.part_id)
+            response = await TopicQuestions.get_or_none(id=data.part_id)
 
             if response:
                 response.votes += data.number
@@ -164,7 +163,7 @@ class TopicService:
         user = await User.get_or_none(login=data.login)
 
         if user:
-            response = await TopicQuections.get_or_none(id=data.part_id)
+            response = await TopicQuestions.get_or_none(id=data.part_id)
 
             if response:
                 response.status = data.status
@@ -185,7 +184,7 @@ class TopicService:
 
     @staticmethod  # Удаление вопроса
     async def delete_question_service(question_id: int):
-        response = await TopicQuections.filter(id=question_id).get_or_none()
+        response = await TopicQuestions.filter(id=question_id).get_or_none()
 
         if response:
             await response.delete()

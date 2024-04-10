@@ -5,7 +5,7 @@ from aiogram import Router, F
 from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 
-from functions.account.account_responses import check_account_login
+from functions.account.account_responses import check_account_login_password
 from functions.account.account_data import delete_redis_keys
 from functions.account.account_prefabs import prefab_account_blacklist
 
@@ -62,7 +62,7 @@ async def authorization_password(message: Message, state: FSMContext):
     data = await state.get_data()
     cleaned_text = re.sub(r'[<>]', '', message.text[:50]) # Убираем символы выделения
 
-    get_user_response = await check_account_login(
+    get_user_response = await check_account_login_password(
         config=message.bot.config,
         login=data.get('login', ''),
         password=cleaned_text

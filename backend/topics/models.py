@@ -3,10 +3,10 @@ from tortoise.models import Model
 
 
 # --- Таблица вопросов. Связь с `User`--- #
-class TopicQuections(Model):
+class TopicQuestions(Model):
     id = fields.IntField(pk=True)
 
-    login = fields.ManyToManyField(
+    login = fields.ForeignKeyField(
         'models.User', related_name='user_question', 
         to_field='login'
     )
@@ -25,7 +25,7 @@ class TopicAnswers(Model):
     id = fields.IntField(pk=True)
 
     question = fields.ManyToManyField(
-        'models.TopicQuections', 
+        'models.TopicQuestions', 
         related_name='question_to_answer', on_delete='CASCADE'
     )
     login = fields.ManyToManyField(
