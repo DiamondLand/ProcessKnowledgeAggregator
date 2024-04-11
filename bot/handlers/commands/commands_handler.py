@@ -4,6 +4,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command
 
 from decorators.profile_decorator import check_authorized
+from decorators.admin_access_decorator import check_admin_acces
+
 from handlers.topics.questions.create_question import create_question_handler
 
 from elements.keyboards.keyboards_profile import profile_kb
@@ -45,7 +47,8 @@ async def cmd_info(message: Message, state: FSMContext):
 
 # --- Админская панель --- #
 @router.message(Command("admin"))
-async def cmd_admin(message: Message, state: FSMContext):
+@check_admin_acces
+async def cmd_admin(message: Message, state: FSMContext, get_user_response: dict):
     # Если стадия существует, выходим из неё
     if await state.get_state() is not None:
         await state.clear()
