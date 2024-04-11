@@ -5,8 +5,6 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 
-from decorators.admin_access_decorator import check_admin_access
-
 from elements.inline.inline_admin import admins_btns
 from elements.answers import server_error, no_state
 
@@ -17,8 +15,7 @@ router = Router()
 
 # --- Добавление в чёрный спискок -> Ввод Id --- #
 @router.callback_query(F.data == "add_to_blacklist")
-@check_admin_access
-async def add_to_blacklist(callback: CallbackQuery, state: FSMContext, get_user_response: dict):
+async def add_to_blacklist(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(
         text="✨💬",
         reply_markup=ReplyKeyboardRemove()

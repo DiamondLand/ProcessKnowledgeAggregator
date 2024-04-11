@@ -18,6 +18,12 @@ async def get_tag_questions_controller(tag: str):
     return await TopicService.get_tag_questions_service(tag=tag)
 
 
+# --- Получение всех вопросов на модерации--- #
+@router.get('/get_all_moder_questions')
+async def get_all_moder_questions_controller():
+    return await TopicService.get_all_moder_questions_service()
+
+
 # --- Получение всех вопросов --- #
 @router.get('/get_all_questions')
 async def get_all_questions_controller():

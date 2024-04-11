@@ -10,15 +10,19 @@ class TopicService:
 
     @staticmethod  # Получение вопроса
     async def get_question_service(question_id: int): 
-        return await TopicQuestions.filter(id=question_id).first().prefetch_related('login')
+        return await TopicQuestions.filter(id=question_id, status=True).first().prefetch_related('login')
 
     @staticmethod  # Получение вопросов по тегам
     async def get_tag_questions_service(tag: str):
-        return await TopicQuestions.filter(tag=tag).order_by('-votes').all()
+        return await TopicQuestions.filter(tag=tag, status=True).order_by('-votes').all()
 
     @staticmethod  # Получение всех вопросов
     async def get_all_questions_service():
-        return await TopicQuestions.filter().order_by('-votes').all()
+        return await TopicQuestions.filter(status=True).order_by('-votes').all()    
+    
+    @staticmethod  # Получение всех вопросов на модерации
+    async def get_all_moder_questions_service():
+        return await TopicQuestions.filter(status=False).order_by('-votes').all()
 
     @staticmethod  # Получение всех вопросов пользователя
     async def get_all_user_questions_service(login: str):
@@ -65,7 +69,7 @@ class TopicService:
 
     @staticmethod  # Получение всех ответов на вопрос
     async def get_all_question_answers_service(question_id: int):
-        question = await TopicQuestions.get_or_none(id=question_id)
+        question = await TopicQuestions.get_or_none(id=question_id, status=True)
 
         if question:
             return await TopicAnswers.filter(question=question).order_by('-votes').all()

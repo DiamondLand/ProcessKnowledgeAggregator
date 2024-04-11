@@ -29,6 +29,10 @@ class Searching(StatesGroup):
     tape_tag_questions = State()
     tape_answers = State()
 
+    tape_complaints = State()
+    tape_moder_questions = State()
+    tape_moder_answers = State()
+
 
 # --- StatesGroup Создание вопроса ---
 class CreateQuestion(StatesGroup):

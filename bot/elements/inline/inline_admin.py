@@ -7,18 +7,6 @@ def admins_btns() -> InlineKeyboardBuilder:
     builder = InlineKeyboardBuilder()
     builder.add(
         InlineKeyboardButton(
-            text="В чёрный список",
-            callback_data="add_to_blacklist"
-        ),
-        InlineKeyboardButton(
-            text="Чёрный список",
-            callback_data="get_blacklist"
-        ),
-        InlineKeyboardButton(
-            text="Из чёрного списка",
-            callback_data="remove_from_blacklist"
-        ),
-        InlineKeyboardButton(
             text="Модерация вопросов",
             callback_data="moder_question"
         ),
@@ -27,8 +15,12 @@ def admins_btns() -> InlineKeyboardBuilder:
             callback_data="moder_answers"
         ),
         InlineKeyboardButton(
-            text="Удалить аккаунт",
-            callback_data="del_profile"
+            text="В чёрный список",
+            callback_data="add_to_blacklist"
+        ),
+        InlineKeyboardButton(
+            text="Из чёрного списка",
+            callback_data="remove_from_blacklist"
         ),
         InlineKeyboardButton(
             text="Удалить аккаунт",
@@ -36,6 +28,7 @@ def admins_btns() -> InlineKeyboardBuilder:
         )
     )
     builder.adjust(3, 1)
+    builder.adjust(2, 1)
     return builder
 
 

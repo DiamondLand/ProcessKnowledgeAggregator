@@ -2,7 +2,8 @@ from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 
 from .text_on_kb import (next_question, vote_question, answer_question, edit_my_question, subscribe_my_question, subscribe_question,
                          view_answers_my_question, view_answers_question, next_my_question, answer_my_question, back, tag_searching,
-                         next_my_answer, next_all_answer, vote_answer, edit_my_answer, back_to_my_answers, back_to_global_answers)
+                         next_my_answer, next_all_answer, vote_answer, edit_my_answer, back_to_my_answers, back_to_global_answers,
+                         moder_yes, moder_no)
 
 
 # --- Панель просмотра всех вопросов ---
@@ -60,4 +61,17 @@ def my_answers_kb() -> ReplyKeyboardMarkup:
         keyboard=kb,
         resize_keyboard=True,
         input_field_placeholder="Собственные ответы"
+    )
+
+
+# --- Панель просмотра админской ленты ---
+def admin_tape_kb() -> ReplyKeyboardMarkup:
+    kb = [
+        [KeyboardButton(text=moder_no), KeyboardButton(text=moder_yes)],
+        [KeyboardButton(text=back)]
+    ]
+    return ReplyKeyboardMarkup(
+        keyboard=kb,
+        resize_keyboard=True,
+        input_field_placeholder="Собственные вопросы"
     )

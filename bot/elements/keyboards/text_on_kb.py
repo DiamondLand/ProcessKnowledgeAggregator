@@ -38,3 +38,7 @@ tag_general = "Общее"
 tag_production = "Производство"
 tag_salary= "Оклад"
 tag_workshops= "Цеха"
+
+
+moder_no = "Отклонить ❌"
+moder_yes = "Одобрить ✅"
