@@ -28,21 +28,10 @@ async def send_moder_tape(state: FSMContext, message: Message = None, callback: 
                 f"{msg.bot.config['SETTINGS']['backend_url']}get_all_moder_answers"
             )
 
-            if get_all_moder_response.json():
-                question_id = get_all_moder_response.json()[0]['question_id']
-
-            if get_all_moder_response.status_code == 200:
-                get_question = await client.get(
-                    f"{msg.bot.config['SETTINGS']['backend_url']}get_question?question_id={question_id}"
-                )
-            else:
-                return await message_to_send.answer(text=server_error)
-
     if get_all_moder_response.status_code == 200:
         get_all_moder_data = get_all_moder_response.json()
-
         if get_all_moder_data:
-
+            
             # Ключи для REDIS
             moder_question_last_id = f"user:{msg.from_user.id}:moder_question_last_id"
             moder_answer_last_id = f"user:{msg.from_user.id}:moder_answer_last_id"
@@ -62,29 +51,76 @@ async def send_moder_tape(state: FSMContext, message: Message = None, callback: 
 
             # Если отклоняем
             if reject is True:
-               async with httpx.AsyncClient() as client:
+                async with httpx.AsyncClient() as client:
                     if questions is True:
                         delete_response = await client.delete(
                             f"{msg.bot.config['SETTINGS']['backend_url']}delete_question?question_id={last_id}"
                         )
+
+                        get_user_response = await check_account_login(
+                            config=msg.bot.config,
+                            login=get_all_moder_data[get_index]['login_id']
+                        )
+                        # * .json() -> [{'user_info'}: ..., {'user_subsribes'}: ..., {'user_statistic'}: ..., {'user_privileges'}: ..., {'blacklist_info'}: ...]
+
+                        chat_id = get_user_response.json()['user_info']['user_id']
                     else:
                         delete_response = await client.delete(
                             f"{msg.bot.config['SETTINGS']['backend_url']}delete_answer?answer_id={last_id}"
                         )
                     if delete_response.status_code != 200 or delete_response.json() is None:
                         await message_to_send.answer(text=server_error)
-                    
-                    get_user_response = await check_account_login(
-                        config=msg.bot.config,
-                        login=get_all_moder_data[get_index]['login_id']
-                    )
-                    # * .json() -> [{'user_info'}: ..., {'user_subsribes'}: ..., {'user_statistic'}: ..., {'user_privileges'}: ..., {'blacklist_info'}: ...]
 
                     try:
-                        await msg.bot.send_message(
-                            chat_id=get_user_response.json()['user_info']['user_id'],
-                            text=f"❌ Ваш запрос на знание <i>{get_all_moder_data[get_index]['question']}</i> отклонили!"
+                        if questions is True:
+                            await msg.bot.send_message(
+                                chat_id=chat_id,
+                                text=f"❌ Ваш запрос на знание <i>{get_all_moder_data[get_index]['question']}</i> отклонили!"
+                            )
+                        else:
+                            await msg.bot.send_message(
+                                chat_id=chat_id,
+                                text=f"❌ Ваш ответ <i>{get_all_moder_data[get_index]['answer']}</i> отклонили!"
+                            )
+                    except Exception as _ex:
+                        print(_ex)
+            
+            # Если одобряем
+            if accept is True:
+                async with httpx.AsyncClient() as client:
+                    if questions is True:
+                        await client.put(msg.bot.config['SETTINGS']['backend_url'] + 'update_question_status', json={
+                            'login': get_all_moder_data[get_index]['login_id'] if questions is True else get_all_moder_data[get_index]['login_id']['id'],
+                            'part_id': last_id,
+                            'status': True
+                        })
+                        
+                        get_user_response = await check_account_login(
+                            config=msg.bot.config,
+                            login=get_all_moder_data[get_index]['login_id']
                         )
+                        # * .json() -> [{'user_info'}: ..., {'user_subsribes'}: ..., {'user_statistic'}: ..., {'user_privileges'}: ..., {'blacklist_info'}: ...]
+                        
+                        chat_id = get_user_response.json()['user_info']['user_id']
+                    else:
+                        await client.put(msg.bot.config['SETTINGS']['backend_url'] + 'update_answers_status', json={
+                            'login': get_all_moder_data[get_index]['login_id']['login'],
+                            'part_id': last_id,
+                            'status': True
+                        })
+                        chat_id = get_all_moder_data[get_index]['login_id']['user_id']
+
+                    try:
+                        if questions is True:
+                            await msg.bot.send_message(
+                                chat_id=chat_id,
+                                text=f"✅ Ваш запрос на знание <i>{get_all_moder_data[get_index]['question']}</i> одобрен и опубликован!"
+                            )
+                        else:
+                            await msg.bot.send_message(
+                                chat_id=chat_id,
+                                text=f"✅ Ваш ответ <i>{get_all_moder_data[get_index]['answer']}</i> одобрен и опубликован!"
+                            )
                     except:
                         pass
 
@@ -95,6 +131,17 @@ async def send_moder_tape(state: FSMContext, message: Message = None, callback: 
                         questions_data=get_all_moder_data[get_index]
                     )
                 else:
+                    if get_all_moder_data:
+                        question_id = get_all_moder_data[get_index]['question_id']['id']
+
+                    if get_all_moder_response.status_code == 200:
+                        async with httpx.AsyncClient() as client:
+                            get_question = await client.get(
+                                f"{msg.bot.config['SETTINGS']['backend_url']}get_question?question_id={question_id}"
+                            )
+                    else:
+                        return await message_to_send.answer(text=server_error)
+            
                     await send_answer_card(
                         msg=message_to_send, 
                         answers_data=get_all_moder_data[get_index],

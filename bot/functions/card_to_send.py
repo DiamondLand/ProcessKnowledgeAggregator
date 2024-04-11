@@ -32,7 +32,7 @@ async def send_answer_card(msg: Message, answers_data: dict, question: str = Non
         return await msg.answer_photo(
             photo=FSInputFile(path=photo_path),
             caption=f"\
-                <b>Вопрос:</b> {question} | <b>Ответил:</b> {answers_data['login_id']}\
+                <b>Вопрос:</b> {question} | <b>Ответил:</b> {answers_data['login_id']['login']}\
                 \n\n<b>🎉 Голосов:</b> <code>{answers_data['votes']}</code>\
                 \n\
                 \n{answers_data['answer']}"
@@ -40,7 +40,7 @@ async def send_answer_card(msg: Message, answers_data: dict, question: str = Non
     else:
         return await msg.answer(
             text=f"\
-                <b>Вопрос:</b> {question} | <b>Ответил:</b> {answers_data['login_id']}\
+                <b>Вопрос:</b> {question} | <b>Ответил:</b> {answers_data['login_id']['login']}\
                 \n\n<b>🎉 Голосов:</b> <code>{answers_data['votes']}</code>\
                 \n\
                 \n{answers_data['answer']}"

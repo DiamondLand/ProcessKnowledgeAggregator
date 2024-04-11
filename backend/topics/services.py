@@ -43,7 +43,7 @@ class TopicService:
 
             # Извлекаем ID первого вопроса из связанных вопросов
             if related_questions:
-                question_id = related_questions[0].id
+                question_id = related_questions[0]
             else:
                 question_id = None
 
@@ -52,7 +52,7 @@ class TopicService:
 
             # Проверяем, есть ли пользователи в списке
             if logins:
-                login_id = logins[0].id
+                login_id = logins[0]
             else:
                 login_id = None
 
@@ -98,7 +98,7 @@ class TopicService:
 
                 # Проверяем, есть ли пользователи в списке
                 if logins:
-                    login_id = logins[0].id
+                    login_id = logins[0]
                 else:
                     login_id = None
 
@@ -134,7 +134,7 @@ class TopicService:
 
                 # Проверяем, есть ли пользователи в списке
                 if logins:
-                    login_id = logins[0].id
+                    login_id = logins[0]
                 else:
                     login_id = None
 
