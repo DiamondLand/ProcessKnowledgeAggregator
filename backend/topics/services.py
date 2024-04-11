@@ -169,6 +169,7 @@ class TopicService:
         if question:
             question.question = data.question
             question.tag = data.tag
+            question.status = False
             await question.save()
 
             return question
@@ -190,6 +191,7 @@ class TopicService:
 
         if answer:
             answer.answer = data.answer
+            answer.status = False
             await answer.save()
 
             return answer

@@ -34,6 +34,7 @@ async def send_answer_card(msg: Message, answers_data: dict, question: str = Non
             caption=f"\
                 <b>Вопрос:</b> {question} | <b>Ответил:</b> {answers_data['login_id']['login']}\
                 \n\n<b>🎉 Голосов:</b> <code>{answers_data['votes']}</code>\
+                \n{'Промодерирован' if answers_data['status'] is True else 'Не промодерирован'}\
                 \n\
                 \n{answers_data['answer']}"
         )
@@ -42,6 +43,7 @@ async def send_answer_card(msg: Message, answers_data: dict, question: str = Non
             text=f"\
                 <b>Вопрос:</b> {question} | <b>Ответил:</b> {answers_data['login_id']['login']}\
                 \n\n<b>🎉 Голосов:</b> <code>{answers_data['votes']}</code>\
+                \n{'Промодерирован' if answers_data['status'] is True else 'Не промодерирован'}\
                 \n\
                 \n{answers_data['answer']}"
         )
