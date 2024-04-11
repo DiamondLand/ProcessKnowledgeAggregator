@@ -23,11 +23,10 @@ def admins_btns() -> InlineKeyboardBuilder:
             callback_data="remove_from_blacklist"
         ),
         InlineKeyboardButton(
-            text="Удалить аккаунт",
-            callback_data="del_profile"
+            text="Запустить рассылку",
+            callback_data="mailing"
         )
     )
-    builder.adjust(3, 1)
     builder.adjust(2, 1)
     return builder
 
