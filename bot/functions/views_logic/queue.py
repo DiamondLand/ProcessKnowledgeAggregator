@@ -53,7 +53,7 @@ async def additional_change_queue_index(message: Message, queue: int, key: str, 
 
 
 # --- Получение и изменение ID поледнего вопроса в ленте --- #
-async def get_last_user_id(message: Message, key: str, last_id: int = None) -> int:
+async def get_last_id(message: Message, key: str, last_id: int = None) -> int:
     async with aioredis.from_url(message.bot.config["SETTINGS"]["redis"]) as redis:
         # Получение текущих значений из Redis
         values = await redis.lrange(key, 0, 1)

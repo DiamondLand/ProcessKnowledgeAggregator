@@ -36,6 +36,12 @@ async def get_all_user_questions_controller(login: str):
     return await TopicService.get_all_user_questions_service(login=login)
 
 
+# --- Получение всех ответов на модерации--- #
+@router.get('/get_all_moder_answers')
+async def get_all_moder_answers_controller():
+    return await TopicService.get_all_moder_answers_service()
+
+
 # --- Получение всех ответов пользователя --- #
 @router.get('/get_all_user_answers')
 async def get_all_user_answers_controller(login: str):

@@ -14,7 +14,7 @@ from elements.answers import server_error
 
 from events.states_group import Searching, CreateAnswer, EditQuestionOrAnswer
 
-from .queue import change_queue_index, get_last_user_id
+from .queue import change_queue_index, get_last_id
 
 
 # --- Функция отправки вопросов --- #
@@ -51,7 +51,7 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
             )
 
             # Получаем ID последнего просмотренного вопроса и обновялем
-            last_question_id = await get_last_user_id(
+            last_question_id = await get_last_id(
                 message=message,
                 key=queue_index_key if global_tape else my_queue_index_key,
                 last_id=questions_data[get_index]['id']
@@ -233,7 +233,6 @@ async def send_searching_answers(message: Message, state: FSMContext, question_i
             )
         else:
             return await message.answer(text=server_error)
-        
 
     answers_data = answers_response.json()
 
@@ -248,7 +247,7 @@ async def send_searching_answers(message: Message, state: FSMContext, question_i
             set_index=False if vote else set_index  # Принудительно не задаём новый индекс если хотим просто поличть last_id
         )
         # Получаем ID последнего просмотренного ответа и обновялем
-        last_answer_id = await get_last_user_id(
+        last_answer_id = await get_last_id(
             message=message,
             key=answers_queue_index_key if global_tape else my_answers_queue_index_key,
             last_id=answers_data[get_index]['id']

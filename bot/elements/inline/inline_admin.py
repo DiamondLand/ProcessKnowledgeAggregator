@@ -8,7 +8,7 @@ def admins_btns() -> InlineKeyboardBuilder:
     builder.add(
         InlineKeyboardButton(
             text="Модерация вопросов",
-            callback_data="moder_question"
+            callback_data="moder_questions"
         ),
         InlineKeyboardButton(
             text="Модерация ответов",

@@ -12,6 +12,7 @@ from functions.account.account_send_sub_questions import send_tags_on_subscribe
 
 from events import errors_handler, profile_events
 from handlers.commands import commands_handler
+from handlers.admin import moderation
 from handlers.admin.blacklist import add_to_blacklist, get_blacklist, remove_from_blacklist
 from handlers.register import register, authorization
 from handlers.topics.questions import tape_start_searching, create_question, create_answers, tape_questions
@@ -47,6 +48,7 @@ async def main():
         create_answers.router,
 
         # Админское
+        moderation.router,
         add_to_blacklist.router,
         get_blacklist.router,
         remove_from_blacklist.router,

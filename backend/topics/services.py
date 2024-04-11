@@ -16,7 +16,7 @@ class TopicService:
     async def get_tag_questions_service(tag: str):
         return await TopicQuestions.filter(tag=tag, status=True).order_by('-votes').all()
 
-    @staticmethod  # Получение всех вопросов
+    @staticmethod  # Получение всех вопросов 
     async def get_all_questions_service():
         return await TopicQuestions.filter(status=True).order_by('-votes').all()    
     
@@ -30,6 +30,47 @@ class TopicService:
 
         if user:
             return await TopicQuestions.filter(login_id=user.login).order_by('-votes').all()
+
+    @staticmethod  # Получение всех ответов на модерации
+    async def get_all_moder_answers_service():
+        responses = await TopicAnswers.filter(status=False).order_by('-votes').all()
+
+        results = []
+
+        for response in responses:
+            # Получаем все связанные вопросы для текущего ответа
+            related_questions = await response.question.all()
+
+            # Извлекаем ID первого вопроса из связанных вопросов
+            if related_questions:
+                question_id = related_questions[0].id
+            else:
+                question_id = None
+
+            # Получаем список связанных пользователей
+            logins = await response.login.all()
+
+            # Проверяем, есть ли пользователи в списке
+            if logins:
+                login_id = logins[0].id
+            else:
+                login_id = None
+
+            # Создаем словарь с информацией об ответе и его связанном вопросе
+            result_data = {
+                'id': response.id,
+                'question_id': question_id,
+                'login_id': login_id,
+                'status': response.status,
+                'votes': response.votes,
+                'created_at': response.created_at.isoformat(),
+                'answer': response.answer
+            }
+
+            # Добавляем созданный словарь в список результатов
+            results.append(result_data)
+        
+        return results
 
     @staticmethod  # Получение всех ответов пользователя
     async def get_all_user_answers_service(login: str):
@@ -52,10 +93,20 @@ class TopicService:
                 else:
                     question_id = None
 
+                # Получаем список связанных пользователей
+                logins = await response.login.all()
+
+                # Проверяем, есть ли пользователи в списке
+                if logins:
+                    login_id = logins[0].id
+                else:
+                    login_id = None
+
                 # Создаем словарь с информацией об ответе и его связанном вопросе
                 result_data = {
                     'id': response.id,
                     'question_id': question_id,
+                    'login_id': login_id,
                     'status': response.status,
                     'votes': response.votes,
                     'created_at': response.created_at.isoformat(),
@@ -72,7 +123,36 @@ class TopicService:
         question = await TopicQuestions.get_or_none(id=question_id, status=True)
 
         if question:
-            return await TopicAnswers.filter(question=question).order_by('-votes').all()
+            answers = await TopicAnswers.filter(question=question, status=True).order_by('-votes').prefetch_related('login').all()
+
+            # Список для хранения результатов
+            results = []
+
+            for answer in answers:
+                # Получаем список связанных пользователей
+                logins = await answer.login.all()
+
+                # Проверяем, есть ли пользователи в списке
+                if logins:
+                    login_id = logins[0].id
+                else:
+                    login_id = None
+
+                # Создаем словарь с информацией об ответе и его связанном вопросе
+                result_data = {
+                    'id': answer.id,
+                    'question_id': question_id,
+                    'login_id': login_id,
+                    'status': answer.status,
+                    'votes': answer.votes,
+                    'created_at': answer.created_at.isoformat(),
+                    'answer': answer.answer
+                }
+
+                # Добавляем созданный словарь в список результатов
+                results.append(result_data)
+
+            return results
 
     @staticmethod  # Создание вопроса
     async def create_question_service(data: CreateQuestion):
