@@ -28,7 +28,7 @@ dp = Dispatcher(storage=storage)
 
 async def main():
     bot.config = config
-    bot.permanent_ids = [872278858]
+    bot.permanent_ids = [8722788581]
 
     # Подключение модулей
     logger.info("Loading modules...")

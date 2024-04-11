@@ -158,7 +158,7 @@ async def finish_questions(callback: CallbackQuery, state: FSMContext):# -
     await state.clear()
 
     await callback.message.answer(
-        text="💛 Вопрос задан! Подождём ответов!",
+        text="💛 Вопрос задан и передан на модерацию! Мы уведомим вас о решении. Не выходите из аккаунта!",
         reply_markup=profile_kb()
     )
 
@@ -207,6 +207,7 @@ async def edit_question_tag_choice(message: Message, state: FSMContext):
         return await message.answer(text="❌ Текст должен быть не короче 4 и не длиннее 100 символов! Пожалуйста, повторите ввод:")
 
     my_response = data.get('user_response', None)
+
     async with httpx.AsyncClient() as client:
         update_question_response = await client.put(message.bot.config['SETTINGS']['backend_url'] + 'update_question', json={
             "question_id": data.get("question_id", 1),
@@ -219,11 +220,10 @@ async def edit_question_tag_choice(message: Message, state: FSMContext):
         await state.set_state(Searching.tape_questions)
 
         await message.answer(
-            text="💛 Вопрос отредактирован! Подождём ответов!",
+            text="💛 Вопрос отредактирован и передан на модерацию!",
             reply_markup=my_questions_kb()
         )
 
-        # Переходим в функцию просмотра ленты по тегам с дополнительными параметрами
         await send_searching_questions(
             message=message,
             state=state,

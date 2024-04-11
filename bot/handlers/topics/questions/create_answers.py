@@ -63,14 +63,12 @@ async def profile_searching(message: Message, state: FSMContext):
 # --- Отправка ответа к вопросу --- #
 @router.message(CreateAnswer.create_answer)
 async def create_answer(message: Message, state: FSMContext):
-    # Если стадия существует, выходим из неё
     current_state = await state.get_state()
     if current_state is not None and current_state != CreateAnswer.create_answer:
         await state.clear()
 
     data = await state.get_data()
 
-    # Проверка на существование формы для заполнения
     if not data:
         await state.clear()
         return await message.answer(text=no_state, reply_markup=profile_kb())
@@ -108,7 +106,6 @@ async def create_answer(message: Message, state: FSMContext):
 # --- Отправка ответа к вопросу --- #
 @router.message(CreateAnswer.create_answer_photo)
 async def create_answer_photo(message: Message, state: FSMContext):
-    # Если стадия существует, выходим из неё
     current_state = await state.get_state()
     if current_state is not None and current_state != CreateAnswer.create_answer_photo:
         await state.clear()
@@ -159,7 +156,6 @@ async def finish_answers(callback: CallbackQuery, state: FSMContext):# -
     global_tape = data.get('global_tape', None)
     answer = data.get('answer', None)
     
-    # Возвращаемся к просмотру ленты
     await callback.message.answer(
         text="✨🔎",
         reply_markup=all_answers_kb() if global_tape else my_answers_kb()
@@ -213,7 +209,6 @@ async def finish_answers(callback: CallbackQuery, state: FSMContext):# -
 async def edit_answer_choice(message: Message, state: FSMContext):
     data = await state.get_data()
 
-    # Проверка на существование формы для заполнения
     if not data:
         await state.clear()
         return await message.answer(text=no_state, reply_markup=profile_kb())
@@ -224,6 +219,7 @@ async def edit_answer_choice(message: Message, state: FSMContext):
 
     my_response = data.get('user_response', None)
     answer_id = data.get("answer_id", 1)
+
     async with httpx.AsyncClient() as client:
         update_answer_response = await client.put(message.bot.config['SETTINGS']['backend_url'] + 'update_answer', json={
             "answer_id": answer_id,
@@ -235,11 +231,10 @@ async def edit_answer_choice(message: Message, state: FSMContext):
         await state.set_state(Searching.tape_answers)
 
         await message.answer(
-            text="💚 Ответ отредактирован!",
+            text="💚 Ответ отредактирован и передан на модерацию!",
             reply_markup=my_answers_kb()
         )
 
-        # Переходим в функцию просмотра ленты по тегам с дополнительными параметрами
         await send_searching_answers(
             message=message,
             state=state,
