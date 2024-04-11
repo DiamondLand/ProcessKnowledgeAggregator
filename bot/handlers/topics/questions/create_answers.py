@@ -142,7 +142,7 @@ async def create_answer_photo(message: Message, state: FSMContext):
 
 # --- Финал --- #
 @router.callback_query(F.data == "finish_answers")
-async def finish_registration(callback: CallbackQuery, state: FSMContext):# -
+async def finish_answers(callback: CallbackQuery, state: FSMContext):# -
     data = await state.get_data()
 
     # Удаляем кнопку с сообщения

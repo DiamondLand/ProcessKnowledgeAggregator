@@ -1,18 +1,22 @@
 import httpx
+import random
+import string
 import re
 
 from aiogram import Router, F
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 
 from decorators.profile_decorator import check_authorized
 
 from functions.views_logic.looped_tape import send_searching_questions
+from functions.inline_remove import remove_button
 
 from elements.keyboards.keyboards_searching import my_questions_kb
 from elements.keyboards.keyboards_profile import profile_kb
 from elements.keyboards.text_on_kb import create_question
 
+from elements.inline.inline_profile import finish_questions_btns
 from elements.keyboards.keyboards_utilits import form_cancel_kb
 from elements.keyboards.keyboards_questions import tags_to_question_kb
 
@@ -86,14 +90,77 @@ async def create_question_tag_choice(message: Message, state: FSMContext, get_us
         })
 
     if create_answer_response.status_code == 200:
-        await state.clear()
+        await state.set_state(CreateQuestion.create_question_photo)
+
+        data['question_id'] = create_answer_response.json()['id']
+        data['user_response'] = get_user_response
+        await state.update_data(data)
 
         await message.answer(
-            text="💛 Вопрос задан! Подождём ответов!",
-            reply_markup=profile_kb()
+            text="🕐 Секундочку...",
+            reply_markup=form_cancel_kb()
+        )
+        await message.answer(
+            text="💛 Вопрос готов! Вы можете прикрепить к нему фотографию или опубликовать без неё:",
+            reply_markup=finish_questions_btns().as_markup()
         )
     else:
         await message.answer(text=server_error)
+
+
+# --- Отправка ответа к вопросу --- #
+@router.message(CreateQuestion.create_question_photo)
+async def create_question_photo(message: Message, state: FSMContext):
+    # Если стадия существует, выходим из неё
+    current_state = await state.get_state()
+    if current_state is not None and current_state != CreateQuestion.create_question_photo:
+        await state.clear()
+
+    data = await state.get_data()
+
+    # Проверка на существование формы для заполнения
+    if not data:
+        await state.clear()
+        return await message.answer(text=no_state, reply_markup=profile_kb())
+
+    if message.photo:
+        question_id = data.get('question_id', None)
+        get_user_response_json = data.get('user_response', None)
+
+        letters = string.ascii_letters + string.digits
+
+        file_path = f"bot/assets/questions/{question_id}_{get_user_response_json['login']}_{''.join(random.choice(letters) for _ in range(7))}.png"
+        await message.bot.download(
+            message.photo[-1],
+            destination=file_path
+        )
+
+        await message.answer(
+            text="💛 Вопрос готов! Вы можете отправить новую фотографию (для замены) или опубликовать!",
+            reply_markup=finish_questions_btns().as_markup()
+        )
+    else:
+        await message.answer(text="❌ Прикрепите фотографию или завершите заполение!")
+
+
+# --- Финал --- #
+@router.callback_query(F.data == "finish_questions")
+async def finish_questions(callback: CallbackQuery, state: FSMContext):# -
+    data = await state.get_data()
+
+    # Удаляем кнопку с сообщения
+    await remove_button(msg=callback.message, state=state)
+
+    if not data:
+        await state.clear()
+        return await callback.message.answer(text=no_state)
+    
+    await state.clear()
+
+    await callback.message.answer(
+        text="💛 Вопрос задан! Подождём ответов!",
+        reply_markup=profile_kb()
+    )
 
 
 # === Редактирование вопроса ===

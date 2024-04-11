@@ -5,7 +5,7 @@ from functions.find_photo import find_photo_in_folder
 
 # --- Отправка картотчки вопроса ---
 async def send_question_card(msg: Message, questions_data: dict):
-    photo_path = find_photo_in_folder(folder_path="bot/assets/answers", id=questions_data['id'])
+    photo_path = find_photo_in_folder(folder_path="bot/assets/questions", id=questions_data['id'])
 
     if photo_path:
         return await msg.answer_photo(
