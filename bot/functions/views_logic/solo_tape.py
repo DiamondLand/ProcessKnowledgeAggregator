@@ -68,6 +68,9 @@ async def send_moder_tape(state: FSMContext, message: Message = None, callback: 
                         delete_response = await client.delete(
                             f"{msg.bot.config['SETTINGS']['backend_url']}delete_answer?answer_id={last_id}"
                         )
+
+                        chat_id = get_all_moder_data[get_index]['login_id']['user_id']
+
                     if delete_response.status_code != 200 or delete_response.json() is None:
                         await message_to_send.answer(text=server_error)
 
@@ -82,8 +85,8 @@ async def send_moder_tape(state: FSMContext, message: Message = None, callback: 
                                 chat_id=chat_id,
                                 text=f"❌ Ваш ответ <i>{get_all_moder_data[get_index]['answer']}</i> отклонили!"
                             )
-                    except Exception as _ex:
-                        print(_ex)
+                    except:
+                        pass
             
             # Если одобряем
             if accept is True:
