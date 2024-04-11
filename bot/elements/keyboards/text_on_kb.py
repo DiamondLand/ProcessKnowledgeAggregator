@@ -9,7 +9,7 @@ create_question = "Задать вопрос"
 reg_profile = "Зарегистрироваться"
 auth_profile = "Авторизироваться"
 
-my_statistic = "Статистика аккаунта"
+leaders = " Лидеры"
 my_questions = "Мои вопросы"
 all_questions = "Все вопросы"
 

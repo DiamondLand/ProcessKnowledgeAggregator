@@ -1,9 +1,11 @@
+import httpx
+
 from aiogram import Router, F
 from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 
 from elements.keyboards.keyboards_profile import profile_kb
-from elements.keyboards.text_on_kb import cancel_button, back
+from elements.keyboards.text_on_kb import cancel_button, back, leaders
 
 from handlers.commands.commands_handler import cmd_start
 
@@ -59,3 +61,38 @@ async def check_captcha(message: Message, state: FSMContext):
             text=f"❌ Не верно! повторите ввод: <strike><b>{captcha_text}</b></strike>",
             reply_markup=ReplyKeyboardRemove()
         )
+
+
+# --- Панель лидеров --- #
+@router.message(F.text == "Лидеры")
+async def leaders_handler(message: Message, state: FSMContext):
+    # Если стадия существует, выходим из неё
+    current_state = await state.get_state()
+    if current_state is not None:
+        await state.clear()
+
+    async with httpx.AsyncClient() as client:
+        get_users_response = await client.get(
+            f"{message.bot.config['SETTINGS']['backend_url']}get_users"
+        )
+    # * .json() -> [{'user_info'}: ..., {'user_subsribes'}: ..., {'user_statistic'}: ..., {'user_privileges'}: ..., {'blacklist_info'}: ...]
+
+    if get_users_response.status_code == 200 and get_users_response.json():
+        text = "ЛИДЕРЫ:\n\n"
+
+        for user_data in get_users_response.json():
+            user_statistics = user_data.get('user_statistic', None)
+
+            if user_statistics:
+                for user_statistic in user_statistics:
+                    login_id = user_statistic.get('login_id', '')
+                    answers = user_statistic.get('answers', 0)
+                    questions = user_statistic.get('questions', 0)
+                    points = user_statistic.get('points', 0)
+                    
+                    user_info = f"<b>Пользователь:</b> <code>{login_id}</code> – <b>Ответы:</b> <code>{answers}</code> | <b>Вопросы:</b> <code>{questions}</code> | <b>Поинты:</b> <code>{points}</code>\n"
+                    text += user_info
+            else:
+                text += "Данные о статистике пользователя отсутствуют\n"
+
+        await message.answer(text=text)

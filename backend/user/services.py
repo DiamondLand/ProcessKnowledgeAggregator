@@ -12,17 +12,25 @@ class UserService:
         data_list = []
         for user in users:
             subscribes_entries = await UserSubsribes.filter(login=user.login).all()
-            statistic_entry = await UserStatistic.get_or_none(login=user.login)
+            statistic_entries = await UserStatistic.filter(login=user.login).all()
             privileges_entry = await UserPrivileges.get_or_none(login=user.login)
             blacklist_entry = await BlackList.get_or_none(login=user.login)
+
+            # Сортировка записей UserStatistic по количеству ответов в порядке убывания
+            sorted_statistic_entries = sorted(statistic_entries, key=lambda x: x.answers, reverse=True)
+
             data_list.append({
                 "user_info": user,
                 "user_subsribes": subscribes_entries,
-                "user_statistic": statistic_entry,
+                "user_statistic": sorted_statistic_entries,
                 "user_privileges": privileges_entry,
                 "blacklist_info": blacklist_entry
             })
-        return data_list
+
+        # Сортировка списка данных о пользователе по количеству ответов в UserStatistic в порядке убывания
+        sorted_data_list = sorted(data_list, key=lambda x: x['user_statistic'][0].answers if x['user_statistic'] else 0, reverse=True)
+
+        return sorted_data_list
     
     @staticmethod  # Получение пользователя
     async def get_user_service(user_id: int):
