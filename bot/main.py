@@ -49,6 +49,7 @@ async def main():
         different_types.router
     )
 
+    #await send_tags_on_subscribe(bot=bot)
     await bot.delete_webhook(drop_pending_updates=True)
     logger.success("Successfully launched")
     await dp.start_polling(bot)

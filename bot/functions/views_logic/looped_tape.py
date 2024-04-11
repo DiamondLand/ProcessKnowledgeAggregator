@@ -12,7 +12,7 @@ from elements.keyboards.keyboards_questions import back_to_global_questions_kb, 
 
 from elements.answers import server_error
 
-from events.states_group import Searching, EditQuestionOrAnswer
+from events.states_group import Searching, CreateAnswer, EditQuestionOrAnswer
 
 from .queue import change_queue_index, get_last_user_id
 
@@ -82,7 +82,7 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
 
             # Ответ на вопрос
             if create_answer is True:
-                await state.set_state(Searching.create_answer)
+                await state.set_state(CreateAnswer.create_answer)
 
                 data = await state.get_data()
                 data['question_id'] = last_question_id

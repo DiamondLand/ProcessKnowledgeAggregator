@@ -17,7 +17,7 @@ from elements.keyboards.text_on_kb import (next_my_question, next_question, view
 
 from elements.answers import no_state
 
-from events.states_group import Searching, EditQuestionOrAnswer
+from events.states_group import Searching, CreateAnswer, EditQuestionOrAnswer
 
 router = Router()
 
@@ -142,7 +142,7 @@ async def back_to_question_tape_func(message: Message, state: FSMContext):
     # Если стадия существует, выходим из неё
     current_state = await state.get_state()
     if current_state is not None and\
-    current_state != Searching.create_answer and\
+    current_state != CreateAnswer.create_answer and\
     current_state != Searching.tape_answers and\
     current_state != EditQuestionOrAnswer.edit_question:
         await state.clear()

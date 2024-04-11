@@ -22,13 +22,18 @@ class Searching(StatesGroup):
     tape_tag_questions = State()
     tape_answers = State()
 
-    create_answer = State()
-
 
 # --- StatesGroup Создание вопроса ---
 class CreateQuestion(StatesGroup):
     create_question = State()
     create_question_tag = State()
+    create_question_photo = State()
+
+
+# --- StatesGroup Создание ответа ---
+class CreateAnswer(StatesGroup):
+    create_answer = State()
+    create_answer_photo = State()
 
 
 # --- StatesGroup изменения вопросов/ответов  ---
