@@ -64,7 +64,7 @@ async def check_captcha(message: Message, state: FSMContext):
 
 
 # --- Панель лидеров --- #
-@router.message(F.text == "Лидеры")
+@router.message(F.text == leaders)
 async def leaders_handler(message: Message, state: FSMContext):
     # Если стадия существует, выходим из неё
     current_state = await state.get_state()
