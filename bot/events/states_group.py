@@ -9,6 +9,13 @@ class CreateProfile(StatesGroup):
     create_contacts = State()
 
 
+# --- StatesGroup для добавления в чёрный список ---
+class AddRemoveBlacklist(StatesGroup):
+    blacklist_login_to_add = State()
+    blacklist_login_to_remove = State()
+    blacklist_reason = State()
+
+
 # --- StatesGroup для авторизации аккаунта ---
 class Authorizationrofile(StatesGroup):
     authorization_login = State()

@@ -10,7 +10,7 @@ from elements.answers import server_error
 
 
 # --- Проверка на авторизовацию --- #
-def check_admin_acces(func):
+def check_admin_access(func):
     @wraps(func)
     async def wrapper(message: Message, state: FSMContext, *args, **kwargs):
         get_user_response = await check_account(config=message.bot.config, user_id=message.from_user.id)

@@ -12,6 +12,7 @@ from functions.account.account_send_sub_questions import send_tags_on_subscribe
 
 from events import errors_handler, profile_events
 from handlers.commands import commands_handler
+from handlers.admin.blacklist import add_to_blacklist, get_blacklist, remove_from_blacklist
 from handlers.register import register, authorization
 from handlers.topics.questions import tape_start_searching, create_question, create_answers, tape_questions
 from handlers import different_types
@@ -26,7 +27,7 @@ dp = Dispatcher(storage=storage)
 
 async def main():
     bot.config = config
-    bot.permanent_ids = [8722788581]
+    bot.permanent_ids = [872278858]
 
     # Подключение модулей
     logger.info("Loading modules...")
@@ -44,6 +45,11 @@ async def main():
         tape_questions.router,
         create_question.router,
         create_answers.router,
+
+        # Админское
+        add_to_blacklist.router,
+        get_blacklist.router,
+        remove_from_blacklist.router,
 
         # Должно быть в конце для заполения форм
         different_types.router
