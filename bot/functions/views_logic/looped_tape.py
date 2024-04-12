@@ -90,7 +90,7 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
                 await state.update_data(data)
 
                 return await message.answer(
-                    text=f"Напишите ответ для вопроса <i>{questions_data[get_index]['question']}</i> или прикрепите фотографию:",
+                    text=f"Напишите ответ для вопроса <i>{questions_data[get_index]['question']}</i> или прикрепите фотографию/отправьте видео:",
                     reply_markup=back_to_global_questions_kb() if global_tape else back_to_my_questions_kb()
                 )
 

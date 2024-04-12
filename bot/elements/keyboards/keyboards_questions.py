@@ -41,12 +41,12 @@ async def tags_to_question_kb(config) -> ReplyKeyboardMarkup:
                 buttons.append([KeyboardButton(text=tag)])
                 used_tags.add(tag)
 
-            buttons.append([KeyboardButton(text=cancel_button)])
+        buttons.append([KeyboardButton(text=cancel_button)])
 
-            return ReplyKeyboardMarkup(
-                keyboard=buttons,
-                resize_keyboard=True
-            )
+        return ReplyKeyboardMarkup(
+            keyboard=buttons,
+            resize_keyboard=True
+        )
     else:
         kb = [
             [KeyboardButton(text=tag_general) , KeyboardButton(text=tag_production)],

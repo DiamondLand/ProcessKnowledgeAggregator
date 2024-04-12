@@ -96,7 +96,7 @@ async def create_answer(message: Message, state: FSMContext):
 
         # Возвращаемся к просмотру ленты
         await message.answer(
-            text="💚 Ответ готов! Вы можете прикрепить к нему фотографию или опубликовать без неё:",
+            text="🧡 Ответ готов! Вы можете прикрепить к нему фотографию или опубликовать без неё:",
             reply_markup=finish_answers_btns().as_markup()
         )
     else:
@@ -130,7 +130,7 @@ async def create_answer_photo(message: Message, state: FSMContext):
         )
 
         await message.answer(
-            text="💚 Ответ готов! Вы можете отправить новую фотографию (для замены) или опубликовать!",
+            text="🧡 Ответ готов! Вы можете отправить новую фотографию (для замены) или опубликовать!",
             reply_markup=finish_answers_btns().as_markup()
         )
     else:
@@ -157,7 +157,7 @@ async def finish_answers(callback: CallbackQuery, state: FSMContext):# -
     answer = data.get('answer', None)
     
     await callback.message.answer(
-        text="✨🔎",
+        text="🧡✅ Ответ отредактирован и передан на модерацию! Мы уведомим вас о решении, не выходите из аккаунта!",
         reply_markup=all_answers_kb() if global_tape else my_answers_kb()
     )
     
@@ -231,7 +231,7 @@ async def edit_answer_choice(message: Message, state: FSMContext):
         await state.set_state(Searching.tape_answers)
 
         await message.answer(
-            text="💚 Ответ отредактирован и передан на модерацию!",
+            text="🧡✅ Ответ отредактирован и передан на модерацию! Мы уведомим вас о решении, не выходите из аккаунта!",
             reply_markup=my_answers_kb()
         )
 

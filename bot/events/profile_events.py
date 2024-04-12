@@ -29,7 +29,7 @@ async def cancel_handler(message: Message, state: FSMContext):
 
     await state.clear()
     await message.answer(
-        text="<b>Действие прервано!</b>\n\nДля возвращения в главную панель воспользуйтесь /profile!",
+        text="<b>Действие прервано!</b>\nДля возвращения в главную панель воспользуйтесь /profile!",
         reply_markup=ReplyKeyboardRemove()
     )
 
@@ -58,7 +58,7 @@ async def check_captcha(message: Message, state: FSMContext):
         )
     else:
         await message.answer(
-            text=f"❌ Не верно! повторите ввод: <strike><b>{captcha_text}</b></strike>",
+            text=f"❌ Не верно! Повторите ввод: <strike><b>{captcha_text}</b></strike>",
             reply_markup=ReplyKeyboardRemove()
         )
 

@@ -1,11 +1,12 @@
 import httpx
 
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 
 from functions.account.account_responses import check_account_login
 from functions.card_to_send import send_question_card, send_answer_card
 
+from elements.inline.inline_admin import admins_btns
 from elements.keyboards.keyboards_profile import profile_kb
 
 from elements.answers import server_error
@@ -153,10 +154,12 @@ async def send_moder_tape(state: FSMContext, message: Message = None, callback: 
 
             else:
                 await state.clear()
-                await message_to_send.answer("На этом пока что всё ✨", reply_markup=profile_kb())
+                await message_to_send.answer("На этом пока что всё ✨", reply_markup=ReplyKeyboardRemove())
+                await message_to_send.answer("Вы - администратор", reply_markup=admins_btns().as_markup())
         else:
             await state.clear()
-            await message_to_send.answer("Модерация данной категории не требуется ✨", reply_markup=profile_kb())
+            await message_to_send.answer("Модерация данной категории не требуется ✨", reply_markup=ReplyKeyboardRemove())
+            await message_to_send.answer("Вы - администратор", reply_markup=admins_btns().as_markup())
     else:
         await state.clear()
         await message_to_send.answer(text=server_error, reply_markup=profile_kb())

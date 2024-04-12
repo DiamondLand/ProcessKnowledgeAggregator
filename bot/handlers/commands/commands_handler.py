@@ -22,7 +22,10 @@ async def cmd_start(message: Message, state: FSMContext, get_user_response: dict
     if await state.get_state() is not None:
         await state.clear()
 
-    await message.answer(text=f"<b>Добро пожаловать 😉!</b>\n\nВы вошли как <code>{get_user_response['login']}</code>!", reply_markup=profile_kb())
+    await message.answer(
+        text=f"<b>Добро пожаловать, дорогой {'администратор' if get_user_response['user_privileges']['is_admin'] else 'сотрудник'} ✨!</b>\
+            \nВы вошли в аккаунт <code>{get_user_response['user_info']['login']}</code>!",
+        reply_markup=profile_kb())
 
 
 # --- Задать вопрос --- #
@@ -34,16 +37,6 @@ async def cmd_question(message: Message, state: FSMContext, get_user_response: d
         await state.clear()
 
     await create_question_handler(message=message, state=state)
-
-
-# --- Информационная панель --- #
-@router.message(Command("info"))
-async def cmd_info(message: Message, state: FSMContext):
-    # Если стадия существует, выходим из неё
-    if await state.get_state() is not None:
-        await state.clear()
-    
-    await message.answer(text=f"...")
 
 
 # --- Админская панель --- #

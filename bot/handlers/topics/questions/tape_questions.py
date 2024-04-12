@@ -56,7 +56,7 @@ async def questions_searching(message: Message, state: FSMContext, my_response: 
     await send_searching_questions(
         message=message,
         state=state,
-        my_response=my_response,
+        my_response=my_response['user_info'],
         **actions
     )
 
@@ -96,9 +96,9 @@ async def questions_tag_write(message: Message, state: FSMContext, my_response: 
     await send_searching_questions(
         message=message,
         state=state,
-        my_response=my_response,
+        my_response=my_response['user_info'],
         tag=cleaned_text,
-        another_key=f"user:{my_response['login']}:tag_queue_index",
+        another_key=f"user:{my_response['user_info']['login']}:tag_queue_index",
         set_index=False
     )
 
@@ -129,9 +129,9 @@ async def questions_tag_searching(message: Message, state: FSMContext, my_respon
     await send_searching_questions(
         message=message,
         state=state,
-        my_response=my_response,
+        my_response=my_response['user_info'],
         tag=data.get("tag", None),
-        another_key=f"user:{my_response['login']}:tag_queue_index",
+        another_key=f"user:{my_response['user_info']['login']}:tag_queue_index",
         **actions
     )
 

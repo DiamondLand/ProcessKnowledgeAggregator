@@ -84,7 +84,7 @@ async def create_question_tag_choice(message: Message, state: FSMContext, get_us
 
     async with httpx.AsyncClient() as client:
         create_answer_response = await client.post(message.bot.config['SETTINGS']['backend_url'] + 'create_question', json={
-            "login": get_user_response['login'],
+            "login": get_user_response['user_info']['login'],
             "question": data.get('question', None),
             "tag": cleaned_text
         })
@@ -93,7 +93,7 @@ async def create_question_tag_choice(message: Message, state: FSMContext, get_us
         await state.set_state(CreateQuestion.create_question_photo)
 
         data['question_id'] = create_answer_response.json()['id']
-        data['user_response'] = get_user_response
+        data['user_response'] = get_user_response['user_info']
         await state.update_data(data)
 
         await message.answer(
@@ -158,7 +158,7 @@ async def finish_questions(callback: CallbackQuery, state: FSMContext):# -
     await state.clear()
 
     await callback.message.answer(
-        text="💛 Вопрос задан и передан на модерацию! Мы уведомим вас о решении. Не выходите из аккаунта!",
+        text="💛✅ Вопрос задан и передан на модерацию! Мы уведомим вас о решении, не выходите из аккаунта!",
         reply_markup=profile_kb()
     )
 
@@ -220,7 +220,7 @@ async def edit_question_tag_choice(message: Message, state: FSMContext):
         await state.set_state(Searching.tape_questions)
 
         await message.answer(
-            text="💛 Вопрос отредактирован и передан на модерацию!",
+            text="💛✅ Вопрос отредактирован и передан на модерацию! Мы уведомим вас о решении, не выходите из аккаунта!",
             reply_markup=my_questions_kb()
         )
 

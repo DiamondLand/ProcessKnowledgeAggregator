@@ -39,7 +39,7 @@ def check_authorized(func):
 
             # Если префабы ничего не вернули, то делаем вызов обработчика команды
             if ban_status[1] is None and authorized_check[1] is None:
-                return await func(message, state, get_user_response.json()['user_info'], *args, **kwargs)
+                return await func(message, state, get_user_response.json(), *args, **kwargs)
         else:
             await state.clear()
             return await message.answer(text=server_error)

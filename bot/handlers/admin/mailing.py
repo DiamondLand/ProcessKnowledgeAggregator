@@ -5,8 +5,11 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 
+from elements.inline.inline_admin import admins_btns
 from elements.keyboards.keyboards_utilits import form_cancel_kb
+
 from elements.answers import server_error
+
 from events.states_group import Utilits
 
 router = Router()
@@ -60,6 +63,7 @@ async def mailing_send(message: Message, state: FSMContext):
                 pass
 
         await state.clear()
-        await message.answer(text=f"<b>Рассылка закончена!</b>\n\nОтправлено {counter}/{len(get_users_response.json())}.")
+        await message.answer(text=f"<b>Рассылка закончена!</b>\nОтправлено {counter}/{len(get_users_response.json())}.")
+        await message.answer("Вы - администратор", reply_markup=admins_btns().as_markup())
     else:
         await message.answer(text=server_error, reply_markup=form_cancel_kb())
