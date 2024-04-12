@@ -6,6 +6,7 @@ from .text_on_kb import recreate_profile, reg_profile, auth_profile, my_question
 # --- Кнопки под клавиатурой для взаимодействия с профилем --- #
 def profile_kb() -> ReplyKeyboardMarkup:
     kb = [
+        [KeyboardButton(text=reg_profile)],
         [KeyboardButton(text=auth_profile)],
         [KeyboardButton(text=all_questions), KeyboardButton(text=my_questions)],
         [KeyboardButton(text=leaders)]

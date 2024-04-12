@@ -208,7 +208,7 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
                 questions_data=questions_data[get_index]
             )
         else:
-            await message.answer(text="<b>Заданных вопросов пока что нет 😉!</b>\n\nВы можете создать первый.", reply_markup=profile_kb())
+            await message.answer(text="<b>Заданных вопросов пока что нет!</b>\nВы можете создать первый.", reply_markup=profile_kb())
     else:
         await message.answer(text=server_error, reply_markup=profile_kb())
 
@@ -312,7 +312,7 @@ async def send_searching_answers(message: Message, state: FSMContext, question_i
 
         # Возвращаемся к просмотру ленты
         await message.answer(
-            text="<b>Ответов на вопрос пока что нет 😉!</b>\n\nВы можете оставить его первым!",
+            text="<b>Ответов на вопрос пока что нет!</b>\nВы можете оставить его первым!",
             reply_markup=all_questions_kb() if global_tape else my_questions_kb()
         )
 

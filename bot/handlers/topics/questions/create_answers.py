@@ -181,16 +181,16 @@ async def finish_answers(callback: CallbackQuery, state: FSMContext):# -
                     photo=FSInputFile(path=photo_path),
                     caption=f"<b>😉 Новый ответ с картинкой!</b>\n\
                         \nНа ваш вопрос: <i>{get_question_response.json()['question']}</i> поступил ответ от <code>{get_user_response_json['login']}</code>:\
-                        \n\nНе промодерирован\
-                        \n{answer}"   
+                        \n\n— {answer}\
+                        \n\n<i>* Ответ ещё не прошёл модерацию!</i>"
                 )
             else:
                 await callback.bot.send_message(
                     chat_id=get_user_response.json()['user_info']['user_id'],
                     text=f"<b>😉 Новый ответ!</b>\n\
                         \nНа ваш вопрос: <i>{get_question_response.json()['question']}</i> поступил ответ от <code>{get_user_response_json['login']}</code>:\
-                        \n\nНе промодерирован\
-                        \n{answer}"
+                        \n\n— {answer}\
+                        \n\n<i>* Ответ ещё не прошёл модерацию!</i>"
                 )
 
 

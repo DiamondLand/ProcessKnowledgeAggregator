@@ -12,17 +12,15 @@ async def send_question_card(msg: Message, questions_data: dict):
             photo=FSInputFile(path=photo_path),
             caption=f"\
                 <b>🏷 Тег:</b> <code>{questions_data['tag']}</code> | <b>🎉 Голосов:</b> <code>{questions_data['votes']}</code> | <b>😎 Автор:</b> <code>{questions_data['login_id']}</code>\
-                \n{'Промодерирован' if questions_data['status'] is True else 'Не промодерирован'}\
-                \n\
-                \n{questions_data['question']}"
+                \n\n— {questions_data['question']}\
+                \n\n<i>* {'Вопрос ещё не прошёл модерацию!' if questions_data['status'] is False else 'Проголосуйте за вопрос и получите поинты!'}</i>"
         )
     else:
         return await msg.answer(
             text=f"\
                 <b>🏷 Тег:</b> <code>{questions_data['tag']}</code> | <b>🎉 Голосов:</b> <code>{questions_data['votes']}</code> | <b>😎 Автор:</b> <code>{questions_data['login_id']}</code>\
-                \n{'Промодерирован' if questions_data['status'] is True else 'Не промодерирован'}\
-                \n\
-                \n{questions_data['question']}"
+                \n\n— {questions_data['question']}\
+                \n\n<i>* {'Вопрос ещё не прошёл модерацию!' if questions_data['status'] is False else 'Проголосуйте за вопрос и получите поинты!'}</i>"
         )
 
 
@@ -34,18 +32,14 @@ async def send_answer_card(msg: Message, answers_data: dict, question: str = Non
         return await msg.answer_photo(
             photo=FSInputFile(path=photo_path),
             caption=f"\
-                <b>Вопрос:</b> <code>{question}</code> | <b>Ответил:</b> <code>{answers_data['login_id']['login']}</code>\
-                \n\n<b>🎉 Голосов:</b> <code>{answers_data['votes']}</code>\
-                \n{'Промодерирован' if answers_data['status'] is True else 'Не промодерирован'}\
-                \n\
-                \n{answers_data['answer']}"
+                <b>💛 Вопрос:</b> <code>{question}</code> | <b>🎉 Голосов:</b> <code>{answers_data['votes']}</code> | <b>😎 Ответил:</b> <code>{answers_data['login_id']['login']}</code>\
+                \n\n— {answers_data['answer']}\
+                \n\n<i>* {'Ответ ещё не прошёл модерацию!' if answers_data['status'] is False else 'Проголосуйте за ответ и получите поинты!'}</i>"
         )
     else:
         return await msg.answer(
             text=f"\
-                <b>Вопрос:</b> <code>{question}</code> | <b>Ответил:</b> <code>{answers_data['login_id']['login']}</code>\
-                \n\n<b>🎉 Голосов:</b> <code>{answers_data['votes']}</code>\
-                \n{'Промодерирован' if answers_data['status'] is True else 'Не промодерирован'}\
-                \n\
-                \n{answers_data['answer']}"
+                <b>💛 Вопрос:</b> <code>{question}</code> | <b>🎉 Голосов:</b> <code>{answers_data['votes']}</code> | <b>😎 Ответил:</b> <code>{answers_data['login_id']['login']}</code>\
+                \n\n— {answers_data['answer']}\
+                \n\n<i>* {'Ответ ещё не прошёл модерацию!' if answers_data['status'] is False else 'Проголосуйте за ответ и получите поинты!'}</i>"
         )
