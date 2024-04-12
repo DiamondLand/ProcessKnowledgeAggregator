@@ -153,22 +153,13 @@ async def finish_answers(callback: CallbackQuery, state: FSMContext):# -
     answer_id = data.get('answer_id', None)
     question_id = data.get('question_id', None)
     get_user_response_json = data.get('user_response', None)
-    global_tape = data.get('global_tape', None)
     answer = data.get('answer', None)
-    
-    await callback.message.answer(
-        text="🧡✅ Ответ отредактирован и передан на модерацию! Мы уведомим вас о решении, не выходите из аккаунта!",
-        reply_markup=all_answers_kb() if global_tape else my_answers_kb()
-    )
-    
-    await send_searching_answers(
-        message=callback.message,
-        state=state,
-        question_id=question_id,
-        my_response=get_user_response_json,
-        global_tape=global_tape
-    )
 
+    await callback.message.answer(
+        text="🧡✅ Ответ готов и передан на модерацию! Мы уведомим вас о решении, не выходите из аккаунта!",
+        reply_markup=profile_kb()
+    )
+    
     # Отправляем сообщение автору
     async with httpx.AsyncClient() as client:
         get_question_response = await client.get(
@@ -190,14 +181,16 @@ async def finish_answers(callback: CallbackQuery, state: FSMContext):# -
                     photo=FSInputFile(path=photo_path),
                     caption=f"<b>😉 Новый ответ с картинкой!</b>\n\
                         \nНа ваш вопрос: <i>{get_question_response.json()['question']}</i> поступил ответ от <code>{get_user_response_json['login']}</code>:\
-                        \n\n{answer}"
+                        \n\nНе промодерирован\
+                        \n{answer}"   
                 )
             else:
                 await callback.bot.send_message(
                     chat_id=get_user_response.json()['user_info']['user_id'],
                     text=f"<b>😉 Новый ответ!</b>\n\
                         \nНа ваш вопрос: <i>{get_question_response.json()['question']}</i> поступил ответ от <code>{get_user_response_json['login']}</code>:\
-                        \n\n{answer}"
+                        \n\nНе промодерирован\
+                        \n{answer}"
                 )
 
 
