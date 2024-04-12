@@ -86,7 +86,7 @@ async def create_contacts(message: Message, state: FSMContext):
         else:
             return await message.answer(
                 text="❌ <b>Нет-нет-нет!</b>\
-                    \nПохоже, Вы пытались указать номер телефона, но он должен состоять из <b>11 цифр</b>.\
+                    \n\nПохоже, Вы пытались указать номер телефона, но он должен состоять из <b>11 цифр</b>.\
                     \n\n<i>* Вы можете повторитеть попытку:</i>"
                 )
     else:

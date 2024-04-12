@@ -27,7 +27,6 @@ async def prefab_account_check_authorized(msg: Message, state: FSMContext, get_u
 # --- Проверка на чёрный список --- #
 async def prefab_account_blacklist(msg: Message, user_id: int, state: FSMContext, get_user_response: dict):
     if get_user_response.status_code == 200:
-        print(get_user_response.json())
         if get_user_response.json()['blacklist_info'] and user_id not in msg.bot.permanent_ids:
             await state.clear()
 
