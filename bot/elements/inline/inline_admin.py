@@ -15,6 +15,10 @@ def admins_btns() -> InlineKeyboardBuilder:
             callback_data="moder_answers"
         ),
         InlineKeyboardButton(
+            text="Чёрный список",
+            callback_data="get_blacklist"
+        ),
+        InlineKeyboardButton(
             text="В чёрный список",
             callback_data="add_to_blacklist"
         ),

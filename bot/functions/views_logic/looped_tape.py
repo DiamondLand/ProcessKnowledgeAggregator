@@ -241,6 +241,7 @@ async def send_searching_answers(message: Message, state: FSMContext, question_i
     if answers_data:
         my_answers_queue_index_key = f"user:{message.from_user.id}:my_answers_queue_index"
         answers_queue_index_key = f"user:{message.from_user.id}:answers_queue_index"
+
         # Получаем индекс вопроса для показа и обновляем id последнего
         get_index = await change_queue_index(
             message=message,
@@ -262,12 +263,12 @@ async def send_searching_answers(message: Message, state: FSMContext, question_i
             if await vote_exists(message=message, key=key):
                 await remove_vote(message=message, key=key)
                 await message.answer(text="💙 Голос за ответ убран!\
-                                     \nМы забрали у вас <code>1 поинт</code>!")
+                                    \nМы забрали у вас <code>1 поинт</code>!")
                 number = -1
             else:
                 await set_vote(message=message, key=key)
                 await message.answer(text="🤍 Голос за ответ отдан!\
-                                     \nВам начислен <code>1 поинт</code>!")
+                                    \nВам начислен <code>1 поинт</code>!")
                 number = 1
 
             async with httpx.AsyncClient() as client:

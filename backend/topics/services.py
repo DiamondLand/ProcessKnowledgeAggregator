@@ -10,7 +10,7 @@ class TopicService:
 
     @staticmethod  # Получение вопроса
     async def get_question_service(question_id: int): 
-        return await TopicQuestions.filter(id=question_id, status=True).first().prefetch_related('login')
+        return await TopicQuestions.filter(id=question_id).first().prefetch_related('login')
 
     @staticmethod  # Получение вопросов по тегам
     async def get_tag_questions_service(tag: str):
