@@ -1,3 +1,5 @@
+import httpx
+
 from aiogram import Router
 from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
@@ -11,6 +13,8 @@ from handlers.games.crossword import show_crossword
 
 from elements.inline.inline_admin import admins_btns
 from elements.keyboards.keyboards_profile import profile_kb
+
+from elements.answers import server_error
 
 router = Router()
 
@@ -33,12 +37,27 @@ async def cmd_start(message: Message, state: FSMContext, get_user_response: dict
 
 @router.message(Command("game"))
 @check_authorized
-async def cmd_game(message: Message, state: FSMContext, __get_user_response: dict):
+async def cmd_game(message: Message, state: FSMContext, get_user_response: dict):
     # Если стадия существует, выходим из неё
     if await state.get_state() is not None:
         await state.clear()
 
-    await message.answer("Давайте сыграем в кроссворд по теме <code>машиностроения</code>. Вот карта кроссворда:")
+    if get_user_response['user_statistic']['points'] >= 5:
+        async with httpx.AsyncClient() as client:
+            update_points_count_response = await client.put(message.bot.config['SETTINGS']['backend_url'] + 'update_points_count', json={
+                'login': get_user_response['user_info']['login'],
+                'number': -5
+            })
+        if update_points_count_response.status_code != 200 or update_points_count_response.json() is None:
+            return await message.answer(text=server_error)
+    else:
+        return await message.answer(
+            text="У вас не хватает очков. Для игры требуется <code>5 поинтов</code>"
+        )
+
+    await message.answer(
+        text="Давайте сыграем в кроссворд по теме <code>машиностроения</code>. Вот карта кроссворда:"
+    )
     await show_crossword(message=message, state=state)
 
 
