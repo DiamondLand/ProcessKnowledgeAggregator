@@ -53,7 +53,7 @@ class UserService:
         subscribes_entries = await UserSubsribes.filter(login=user.login if user else None).all()
         statistic_entry = await UserStatistic.get_or_none(login=user.login if user else None)
         privileges_entry = await UserPrivileges.get_or_none(login=user.login if user else None)
-        blacklist_entry = await BlackList.get_or_none(login=user.login if user else None)
+        blacklist_entry = await BlackList.get_or_none(login=login)
         return {
             "user_info": user,
             "user_subsribes": subscribes_entries,
@@ -68,7 +68,7 @@ class UserService:
         subscribes_entries = await UserSubsribes.filter(login=user.login if user else None).all()
         statistic_entry = await UserStatistic.get_or_none(login=user.login if user else None)
         privileges_entry = await UserPrivileges.get_or_none(login=user.login if user else None)
-        blacklist_entry = await BlackList.get_or_none(login=user.login if user else None)
+        blacklist_entry = await BlackList.get_or_none(login=login)
         return {
             "user_info": user,
             "user_subsribes": subscribes_entries,
