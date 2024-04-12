@@ -7,6 +7,7 @@ from decorators.profile_decorator import check_authorized
 from decorators.admin_access_decorator import check_admin_access
 
 from handlers.topics.questions.create_question import create_question_handler
+from handlers.games.crossword import show_crossword
 
 from elements.inline.inline_admin import admins_btns
 from elements.keyboards.keyboards_profile import profile_kb
@@ -30,10 +31,21 @@ async def cmd_start(message: Message, state: FSMContext, get_user_response: dict
         reply_markup=profile_kb())
 
 
+@router.message(Command("game"))
+@check_authorized
+async def cmd_game(message: Message, state: FSMContext, __get_user_response: dict):
+    # Если стадия существует, выходим из неё
+    if await state.get_state() is not None:
+        await state.clear()
+
+    await message.answer("Давайте сыграем в кроссворд по теме <code>машиностроения</code>. Вот карта кроссворда:")
+    await show_crossword(message=message, state=state)
+
+
 # --- Задать вопрос --- #
 @router.message(Command("question"))
 @check_authorized
-async def cmd_question(message: Message, state: FSMContext, get_user_response: dict):
+async def cmd_question(message: Message, state: FSMContext, __get_user_response: dict):
     # Если стадия существует, выходим из неё
     if await state.get_state() is not None:
         await state.clear()
@@ -44,7 +56,7 @@ async def cmd_question(message: Message, state: FSMContext, get_user_response: d
 # --- Админская панель --- #
 @router.message(Command("admin"))
 @check_admin_access
-async def cmd_admin(message: Message, state: FSMContext, get_user_response: dict):
+async def cmd_admin(message: Message, state: FSMContext, __get_user_response: dict):
     # Если стадия существует, выходим из неё
     if await state.get_state() is not None:
         await state.clear()

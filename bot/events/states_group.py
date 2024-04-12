@@ -12,6 +12,7 @@ class CreateProfile(StatesGroup):
 # --- StatesGroup для утилит ---
 class Utilits(StatesGroup):
     mailing = State()
+    crossword_input = State()
 
 
 # --- StatesGroup для добавления в чёрный список ---

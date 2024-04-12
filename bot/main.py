@@ -16,6 +16,7 @@ from handlers.admin import moderation
 from handlers.admin import mailing
 from handlers.admin.blacklist import add_to_blacklist, get_blacklist, remove_from_blacklist
 from handlers.register import register, authorization
+from handlers.games import crossword
 from handlers.topics.questions import tape_start_searching, create_question, create_answers, tape_questions
 from handlers import different_types
 
@@ -47,6 +48,7 @@ async def main():
         tape_questions.router,
         create_question.router,
         create_answers.router,
+        crossword.router,
 
         # Админское
         moderation.router,
