@@ -81,6 +81,7 @@ async def leaders_handler(message: Message, state: FSMContext):
         text = "ЛИДЕРЫ:\n\n"
 
         for user_data in get_users_response.json():
+            user_info = user_data.get('user_info', {})
             user_statistics = user_data.get('user_statistic', None)
 
             if user_statistics:
@@ -89,9 +90,15 @@ async def leaders_handler(message: Message, state: FSMContext):
                     answers = user_statistic.get('answers', 0)
                     questions = user_statistic.get('questions', 0)
                     points = user_statistic.get('points', 0)
-                    
-                    user_info = f"<b>Пользователь:</b> <code>{login_id}</code> – <b>Ответы:</b> <code>{answers}</code> | <b>Вопросы:</b> <code>{questions}</code> | <b>Поинты:</b> <code>{points}</code>\n"
-                    text += user_info
+
+                    contacts = user_info.get('contacts', '')
+
+                    user_info_str = f"<b>Пользователь:</b> <code>{login_id}</code>."
+                    if contacts:
+                        user_info_str += f" <b>Контакты:</b> <code>{contacts}</code>\n"
+                    user_info_str += f"Ответов: <code>{answers}</code> | Вопросов: <code>{questions}</code> | Поинтов: <code>{points}</code>\n\n"
+
+                    text += user_info_str
             else:
                 text += "Данные о статистике пользователя отсутствуют\n"
 
