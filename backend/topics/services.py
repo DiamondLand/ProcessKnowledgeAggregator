@@ -157,9 +157,14 @@ class TopicService:
     @staticmethod  # Создание вопроса
     async def create_question_service(data: CreateQuestion):
         user = await User.get_or_none(login=data.login)
+        statistic = await UserStatistic.get_or_none(login=data.login)
 
-        if user:
+        if user and statistic:
             question = await TopicQuestions.create(login=user, tag=data.tag, question=data.question)
+
+            statistic.questions += 1
+            await statistic.save()
+
             return question
 
     @staticmethod  # Обновление вопроса
@@ -177,12 +182,17 @@ class TopicService:
     @staticmethod  # Создание ответа
     async def create_answer_service(data: CreateAnswer):
         user = await User.get_or_none(login=data.login)
+        statistic = await UserStatistic.get_or_none(login=data.login)
         question = await TopicQuestions.get_or_none(id=data.question_id)
 
-        if user and question:
+        if user and question and statistic:
             answer = await TopicAnswers.create(answer=data.answer)
             await question.question_to_answer.add(answer)
             await user.user_answers.add(answer)
+
+            statistic.answers += 1
+            await statistic.save()
+
             return answer
 
     @staticmethod  # Обновление ответа
@@ -218,9 +228,12 @@ class TopicService:
                 await response.save()
 
                 user_statistic_response = await UserStatistic.get_or_none(login=data.login)
-                #! Человек может зафармить поинты проставляя голос и убирая его
+
                 if user_statistic_response and data.number > 0:
-                    user_statistic_response.points += random.randint(1, 3)
+                    user_statistic_response.points += 1
+                    await user_statistic_response.save()
+                elif data.number < 0 and user_statistic_response.points >= 1:
+                    user_statistic_response.points -= 1
                     await user_statistic_response.save()
 
                 return {"message": "success"}
@@ -237,9 +250,11 @@ class TopicService:
 
             user_statistic_response = await UserStatistic.get_or_none(login=data.login)
 
-            #! Человек может зафармить поинты проставляя голос и убирая его
             if user_statistic_response and data.number > 0:
                 user_statistic_response.points += 1
+                await user_statistic_response.save()
+            elif data.number < 0 and user_statistic_response.points >= 1:
+                user_statistic_response.points -= 1
                 await user_statistic_response.save()
 
             return {"message": "success"}
@@ -254,6 +269,13 @@ class TopicService:
             if response:
                 response.status = data.status
                 await response.save()
+            
+            user_statistic_response = await UserStatistic.get_or_none(login=data.login)
+
+            if user_statistic_response:
+                user_statistic_response.points += 2
+                await user_statistic_response.save()
+
                 return {"message": "success"}
 
     @staticmethod  # Обновление статуса ответа
@@ -266,6 +288,13 @@ class TopicService:
             if response:
                 response.status = data.status
                 await response.save()
+            
+            user_statistic_response = await UserStatistic.get_or_none(login=data.login)
+
+            if user_statistic_response:
+                user_statistic_response.points += 2
+                await user_statistic_response.save()
+
                 return {"message": "success"}
 
     @staticmethod  # Удаление вопроса

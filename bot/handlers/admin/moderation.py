@@ -2,8 +2,6 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 
-from decorators.admin_access_decorator import check_admin_access
-
 from functions.inline_remove import remove_button
 from functions.views_logic.solo_tape import send_moder_tape
 

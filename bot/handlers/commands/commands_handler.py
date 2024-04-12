@@ -24,7 +24,9 @@ async def cmd_start(message: Message, state: FSMContext, get_user_response: dict
 
     await message.answer(
         text=f"<b>Добро пожаловать, дорогой {'администратор' if get_user_response['user_privileges']['is_admin'] else 'сотрудник'} ✨!</b>\
-            \nВы вошли в аккаунт <code>{get_user_response['user_info']['login']}</code>!",
+            \nВы вошли в аккаунт <code>{get_user_response['user_info']['login']}</code>!\
+            \n\nВаших вопросов: <code>{get_user_response['user_statistic']['questions']}</code> | Ваших ответов: <code>{get_user_response['user_statistic']['answers']}</code>\
+            \nВаших поинтов: <code>{get_user_response['user_statistic']['points']}</code>",
         reply_markup=profile_kb())
 
 

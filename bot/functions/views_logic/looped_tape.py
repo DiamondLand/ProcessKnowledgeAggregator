@@ -100,11 +100,13 @@ async def send_searching_questions(message: Message, state: FSMContext, my_respo
 
                 if await vote_exists(message=message, key=key):
                     await remove_vote(message=message, key=key)
-                    await message.answer(text="💙 Голос за вопрос убран!")
+                    await message.answer(text="💙 Голос за вопрос убран!\
+                                     \nМы забрали у вас <code>1 поинт</code>!")
                     number = -1
                 else:
                     await set_vote(message=message, key=key)
-                    await message.answer(text="🤍 Голос за вопрос отдан!")
+                    await message.answer(text="🤍 Голос за вопрос отдан!\
+                                     \nВам начислен <code>1 поинт</code>!")
                     number = 1
 
                 async with httpx.AsyncClient() as client:
@@ -259,11 +261,13 @@ async def send_searching_answers(message: Message, state: FSMContext, question_i
 
             if await vote_exists(message=message, key=key):
                 await remove_vote(message=message, key=key)
-                await message.answer(text="💙 Голос за ответ убран!")
+                await message.answer(text="💙 Голос за ответ убран!\
+                                     \nМы забрали у вас <code>1 поинт</code>!")
                 number = -1
             else:
                 await set_vote(message=message, key=key)
-                await message.answer(text="🤍 Голос за ответ отдан!")
+                await message.answer(text="🤍 Голос за ответ отдан!\
+                                     \nВам начислен <code>1 поинт</code>!")
                 number = 1
 
             async with httpx.AsyncClient() as client:

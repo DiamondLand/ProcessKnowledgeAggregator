@@ -12,6 +12,7 @@ async def send_question_card(msg: Message, questions_data: dict):
             photo=FSInputFile(path=photo_path),
             caption=f"\
                 <b>🏷 Тег:</b> <code>{questions_data['tag']}</code> | <b>🎉 Голосов:</b> <code>{questions_data['votes']}</code> | <b>😎 Автор:</b> <code>{questions_data['login_id']}</code>\
+                \n{'Промодерирован' if questions_data['status'] is True else 'Не промодерирован'}\
                 \n\
                 \n{questions_data['question']}"
         )
@@ -19,6 +20,7 @@ async def send_question_card(msg: Message, questions_data: dict):
         return await msg.answer(
             text=f"\
                 <b>🏷 Тег:</b> <code>{questions_data['tag']}</code> | <b>🎉 Голосов:</b> <code>{questions_data['votes']}</code> | <b>😎 Автор:</b> <code>{questions_data['login_id']}</code>\
+                \n{'Промодерирован' if questions_data['status'] is True else 'Не промодерирован'}\
                 \n\
                 \n{questions_data['question']}"
         )

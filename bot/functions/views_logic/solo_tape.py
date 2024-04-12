@@ -31,6 +31,7 @@ async def send_moder_tape(state: FSMContext, message: Message = None, callback: 
 
     if get_all_moder_response.status_code == 200:
         get_all_moder_data = get_all_moder_response.json()
+
         if get_all_moder_data:
             
             # Ключи для REDIS
@@ -118,12 +119,14 @@ async def send_moder_tape(state: FSMContext, message: Message = None, callback: 
                         if questions is True:
                             await msg.bot.send_message(
                                 chat_id=chat_id,
-                                text=f"✅ Ваш запрос на знание <i>{get_all_moder_data[get_index]['question']}</i> одобрен и опубликован!"
+                                text=f"✅ Ваш запрос на знание <i>{get_all_moder_data[get_index]['question']}</i> одобрен и опубликован!\
+                                    \nВам начислено <code>2 поинта</code>!"
                             )
                         else:
                             await msg.bot.send_message(
                                 chat_id=chat_id,
-                                text=f"✅ Ваш ответ <i>{get_all_moder_data[get_index]['answer']}</i> одобрен и опубликован!"
+                                text=f"✅ Ваш ответ <i>{get_all_moder_data[get_index]['answer']}</i> одобрен и опубликован!\
+                                    \nВам начислено <code>2 поинта</code>!"
                             )
                     except:
                         pass
