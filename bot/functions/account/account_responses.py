@@ -15,7 +15,7 @@ async def check_account_login(config, login: str):
         return await client.get(
             f"{config['SETTINGS']['backend_url']}get_login?login={login}"
         )
-    
+
 
 # --- Проверка аккаунта по логину и паролю--- #
 async def check_account_login_password(config, login: str, password: str):

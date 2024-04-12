@@ -12,6 +12,9 @@ class CreateProfile(StatesGroup):
 # --- StatesGroup для утилит ---
 class Utilits(StatesGroup):
     mailing = State()
+    send_dm_get_login = State()
+    send_dm = State()
+    delete_login = State()
     crossword_input = State()
 
 

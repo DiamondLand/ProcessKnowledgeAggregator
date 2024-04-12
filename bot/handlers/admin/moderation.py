@@ -2,7 +2,6 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 
-from functions.inline_remove import remove_button
 from functions.views_logic.solo_tape import send_moder_tape
 
 from elements.keyboards.keyboards_searching import admin_tape_kb
@@ -17,9 +16,8 @@ router = Router()
 # --- Просмотр ленты модерации вопросов ---
 @router.callback_query(F.data == "moder_questions")
 async def moder_questions(callback: CallbackQuery, state: FSMContext):
+    await callback.answer(text="Вы начинаете модерацию вопросов.", show_alert=True)
     await state.set_state(Searching.tape_moder_questions)
-    
-    await remove_button(msg=callback.message, inline_keyboard_markup=None)
 
     await callback.message.answer(
         text="💬✨",
@@ -53,9 +51,8 @@ async def start_questions_moder_tape(message: Message, state: FSMContext):
 # --- Просмотр ленты модерации ответов ---
 @router.callback_query(F.data == "moder_answers")
 async def moder_answers(callback: CallbackQuery, state: FSMContext):
+    await callback.answer(text="Вы начинаете модерацию ответов.", show_alert=True)
     await state.set_state(Searching.tape_moder_answers)
-    
-    await remove_button(msg=callback.message, inline_keyboard_markup=None)
 
     await callback.message.answer(
         text="💬✨",

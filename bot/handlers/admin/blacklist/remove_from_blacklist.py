@@ -16,6 +16,7 @@ router = Router()
 # --- Вычёркивание из чёрного списка -> Ввод логин --- #
 @router.callback_query(F.data == "remove_from_blacklist")
 async def remove_from_blacklist(callback: CallbackQuery, state: FSMContext):
+    await callback.answer(text="Вы удаляете пользователя из чёрного списка.", show_alert=True)
     await callback.message.answer(
         text="✨💬",
         reply_markup=ReplyKeyboardRemove()

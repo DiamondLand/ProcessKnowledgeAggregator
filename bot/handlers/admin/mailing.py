@@ -18,6 +18,7 @@ router = Router()
 # --- Обработчик кнопки рассылки ---
 @router.callback_query(F.data == "mailing")
 async def mailing(callback: CallbackQuery, state: FSMContext):
+    await callback.answer(text="Вы начинаете рассылку для всех пользователей.", show_alert=True)
     await state.set_state(Utilits.mailing)
 
     await callback.message.answer(
@@ -31,7 +32,7 @@ async def mailing(callback: CallbackQuery, state: FSMContext):
 async def mailing_send(message: Message, state: FSMContext):
 
     msg = await message.answer(text="Процесс отправки будет запущен через <i>5 секунд</i>. Вы можете <b>отменить</b> это действие <b>кнопкой под клавиатурой</b>!")
-    await asyncio.sleep(5)  # Глушим на 10 секунд перед началом рассылки
+    await asyncio.sleep(5)  # Глушим на 5 секунд перед началом рассылки
 
     # Если пользоветель отмменил, то останавливаем рассылку
     if await state.get_state() != Utilits.mailing:

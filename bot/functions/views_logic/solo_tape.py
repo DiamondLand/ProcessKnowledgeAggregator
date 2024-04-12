@@ -162,7 +162,6 @@ async def send_moder_tape(state: FSMContext, message: Message = None, callback: 
         else:
             await state.clear()
             await message_to_send.answer("Модерация данной категории не требуется ✨", reply_markup=ReplyKeyboardRemove())
-            await message_to_send.answer("Вы - администратор", reply_markup=admins_btns().as_markup())
     else:
         await state.clear()
         await message_to_send.answer(text=server_error, reply_markup=profile_kb())

@@ -16,6 +16,7 @@ router = Router()
 # --- Добавление в чёрный спискок -> Ввод Id --- #
 @router.callback_query(F.data == "add_to_blacklist")
 async def add_to_blacklist(callback: CallbackQuery, state: FSMContext):
+    await callback.answer(text="Вы вносите пользователя в чёрный список.", show_alert=True)
     await callback.message.answer(
         text="✨💬",
         reply_markup=ReplyKeyboardRemove()

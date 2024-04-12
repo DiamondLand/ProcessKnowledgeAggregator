@@ -12,8 +12,7 @@ from functions.account.account_send_sub_questions import send_tags_on_subscribe
 
 from events import errors_handler, profile_events
 from handlers.commands import commands_handler
-from handlers.admin import moderation
-from handlers.admin import mailing
+from handlers.admin import moderation, mailing, send_dm, delete_user
 from handlers.admin.blacklist import add_to_blacklist, get_blacklist, remove_from_blacklist
 from handlers.register import register, authorization
 from handlers.games import crossword
@@ -53,6 +52,8 @@ async def main():
         # Админское
         moderation.router,
         mailing.router,
+        send_dm.router,
+        delete_user.router,
         add_to_blacklist.router,
         get_blacklist.router,
         remove_from_blacklist.router,

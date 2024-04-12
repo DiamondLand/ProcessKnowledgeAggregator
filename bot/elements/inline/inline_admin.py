@@ -29,6 +29,14 @@ def admins_btns() -> InlineKeyboardBuilder:
         InlineKeyboardButton(
             text="Запустить рассылку",
             callback_data="mailing"
+        ),
+        InlineKeyboardButton(
+            text="Написать по логину в ЛС",
+            callback_data="send_dm"
+        ),
+        InlineKeyboardButton(
+            text="Удалить аккаунт по логину",
+            callback_data="delete_login"
         )
     )
     builder.adjust(2, 1)

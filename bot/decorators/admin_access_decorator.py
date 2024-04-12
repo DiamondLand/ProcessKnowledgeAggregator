@@ -17,7 +17,7 @@ def check_admin_access(func):
         # * .json() -> [{'user_info'}: ..., {'user_subsribes'}: ..., {'user_statistic'}: ..., {'user_privileges'}: ..., {'blacklist_info'}: ...]
 
         if get_user_response.status_code == 200:
-            if get_user_response.json()['user_privileges']['is_admin'] is True or message.from_user.id in message.bot.permanent_ids:
+            if get_user_response.json()['user_privileges'] and get_user_response.json()['user_privileges']['is_admin'] is True or message.from_user.id in message.bot.permanent_ids:
                 # Используем префаб проверки на блокировку
                 ban_status = await prefab_account_blacklist(
                     msg=message,
