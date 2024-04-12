@@ -230,9 +230,10 @@ async def send_searching_answers(message: Message, state: FSMContext, question_i
                 question_id = answers_response.json()[0]['question_id']
 
         if answers_response.status_code == 200:
-            get_question = await client.get(
-                f"{message.bot.config['SETTINGS']['backend_url']}get_question?question_id={question_id}"
-            )
+            if question_id:
+                get_question = await client.get(
+                    f"{message.bot.config['SETTINGS']['backend_url']}get_question?question_id={question_id}"
+                )
         else:
             return await message.answer(text=server_error)
 
@@ -304,7 +305,7 @@ async def send_searching_answers(message: Message, state: FSMContext, question_i
         await send_answer_card(
             msg=message, 
             answers_data=answers_data[get_index],
-            question=get_question.json()['question']
+            question=get_question.json()['question'] if question_id else 'Вопрос не промодерирован!'
         )
     else:  
         # Задаём новую стадию просмотра вопросов

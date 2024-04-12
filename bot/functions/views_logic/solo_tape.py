@@ -33,7 +33,7 @@ async def send_moder_tape(state: FSMContext, message: Message = None, callback: 
         get_all_moder_data = get_all_moder_response.json()
 
         if get_all_moder_data:
-            
+
             # Ключи для REDIS
             moder_question_last_id = f"user:{msg.from_user.id}:moder_question_last_id"
             moder_answer_last_id = f"user:{msg.from_user.id}:moder_answer_last_id"
@@ -139,7 +139,7 @@ async def send_moder_tape(state: FSMContext, message: Message = None, callback: 
                     )
                 else:
                     if get_all_moder_data:
-                        question_id = get_all_moder_data[get_index]['question_id']['id']
+                        question_id = get_all_moder_data[get_index]['question_id']['id'] if get_all_moder_data[get_index]['question_id'] else 0
 
                     if get_all_moder_response.status_code == 200:
                         async with httpx.AsyncClient() as client:
@@ -152,7 +152,7 @@ async def send_moder_tape(state: FSMContext, message: Message = None, callback: 
                     await send_answer_card(
                         msg=message_to_send, 
                         answers_data=get_all_moder_data[get_index],
-                        question=get_question.json()['question']
+                        question=get_question.json()['question'] if get_question.json() else 'Вопрос не промодерирован!'
                     )
 
             else:
