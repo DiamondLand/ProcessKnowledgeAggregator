@@ -10,7 +10,7 @@ def init_db(app):
     register_tortoise(
         app,
         #db_url=f"postgres://{config['DATABASE']['user']}:{config['DATABASE']['password']}@{config['DATABASE']['host']}:{config['DATABASE']['port']}/{config['DATABASE']['database']}",
-        db_url='sqlite://bot/database.db',
+        db_url='sqlite://bot/assets/database/database.db',
         modules={'models': [
             'user.models',
             'userStatistic.models',
