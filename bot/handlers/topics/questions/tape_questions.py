@@ -106,7 +106,7 @@ async def questions_tag_write(message: Message, state: FSMContext, my_response: 
 # --- Кнопки действий при просмотре ленты вопросов по тегам --- #
 @router.message(
     Searching.tape_tag_questions,
-    (F.text == next_question) | (F.text == view_answers_question)
+    (F.text == next_question) | (F.text == view_answers_question) |
     (F.text == answer_question) | (F.text == vote_question) | (F.text == subscribe_question)
 )
 @anti_robot_check
