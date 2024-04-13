@@ -11,7 +11,7 @@ from functions.account.account_data import delete_redis_keys
 from functions.account.account_prefabs import prefab_account_blacklist
 
 from elements.inline.inline_profile import finish_registration_btns
-from elements.keyboards.keyboards_utilits import form_cancel_kb
+from elements.keyboards.keyboards_utilits import form_cancel_kb, generate_password_kb
 from elements.keyboards.keyboards_profile import recreate_profile_kb, profile_kb
 
 from elements.keyboards.text_on_kb import recreate_profile, reg_profile
@@ -49,10 +49,11 @@ async def create_login(message: Message, state: FSMContext):
     data['login'] = cleaned_text
     await state.update_data(data)
 
-    # :TODO: Длбавить генерацию пароля
     await message.answer(
         text=f"<b>Запомнил - <code>{cleaned_text}</code> ✨!</b>\
-        \nТеперь потребуется пароль:",
+        \nТеперь потребуется пароль:\
+        \n\n<i>* Случайно сгенерированный пароль отображён под клавиатруой. Вы можете воспользоваться им!</i>",
+        reply_markup=generate_password_kb()
     )
     await state.set_state(CreateProfile.create_password)
 
@@ -70,6 +71,7 @@ async def create_password(message: Message, state: FSMContext):
         text=f"<b>Ваш пароль - <code>{cleaned_text}</code> ✨!</b>\
         \nУкажите контактую информацию:\
         \n\n<i>* Телефон или иное средство для связи.</i>",
+        reply_markup=form_cancel_kb()
     )
     await state.set_state(CreateProfile.create_contacts)
 
