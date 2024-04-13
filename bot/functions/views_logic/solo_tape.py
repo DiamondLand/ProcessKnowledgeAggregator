@@ -80,12 +80,12 @@ async def send_moder_tape(state: FSMContext, message: Message = None, callback: 
                         if questions is True:
                             await msg.bot.send_message(
                                 chat_id=chat_id,
-                                text=f"❌ Ваш запрос на знание <i>{get_all_moder_data[get_index]['question']}</i> отклонили!"
+                                text=f"❌ Ваш запрос на знание отклонили!"
                             )
                         else:
                             await msg.bot.send_message(
                                 chat_id=chat_id,
-                                text=f"❌ Ваш ответ <i>{get_all_moder_data[get_index]['answer']}</i> отклонили!"
+                                text=f"❌ Ваш ответ отклонили!"
                             )
                     except:
                         pass
@@ -119,18 +119,18 @@ async def send_moder_tape(state: FSMContext, message: Message = None, callback: 
                         if questions is True:
                             await msg.bot.send_message(
                                 chat_id=chat_id,
-                                text=f"✅ Ваш запрос на знание <i>{get_all_moder_data[get_index]['question']}</i> одобрен и опубликован!\
+                                text=f"✅ Ваш запрос на знание одобрен и опубликован!\
                                     \nВам начислено <code>2 поинта</code>!"
                             )
                         else:
                             await msg.bot.send_message(
                                 chat_id=chat_id,
-                                text=f"✅ Ваш ответ <i>{get_all_moder_data[get_index]['answer']}</i> одобрен и опубликован!\
+                                text=f"✅ Ваш ответ одобрен и опубликован!\
                                     \nВам начислено <code>2 поинта</code>!"
                             )
                     except:
                         pass
-
+            
             if get_index >= 0:
                 if questions is True:
                     await send_question_card(

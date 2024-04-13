@@ -2,7 +2,6 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 
-from elements.inline.inline_admin import admins_btns
 from elements.keyboards.keyboards_utilits import form_cancel_kb
 
 from functions.account.account_responses import check_account_login
@@ -77,10 +76,8 @@ async def start_send_dm(message: Message, state: FSMContext):
             text="💖 Пользователь получил ваше сообщение!",
             reply_markup=ReplyKeyboardRemove()
         )
-        await message.answer("Вы - администратор", reply_markup=admins_btns().as_markup())
     except:
         await message.answer(
             text="💔 Пользователь не получил сообщение, поскольку не был авторизован/удалил чат с ботов.",
             reply_markup=ReplyKeyboardRemove()
         )
-        await message.answer("Вы - администратор", reply_markup=admins_btns().as_markup())

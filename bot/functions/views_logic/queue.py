@@ -35,21 +35,15 @@ async def additional_change_queue_index(message: Message, queue: int, key: str, 
         if values:
             user_index = int(values[0])
         else:
-            # Если список пуст, добавляем начальное значение
             await redis.rpush(key, 0)
-            user_index = 0
+            return 0
 
-        # Проверяем, не превышает ли индекс общее количество записей
-        if set_index and user_index + 1 > queue - 1:
-            await redis.delete(key)
-            return -1
-
-        # Если нужно установить индекс, обновляем его
         if set_index:
-            user_index += 1
-            await redis.lset(key, 0, user_index)
+            if user_index + 1 < queue:  # Проверяем, не превышает ли новый индекс текущий максимум
+                user_index += 1
+                await redis.lset(key, 0, user_index)  # Сохраняем новый индекс в списке Redis
 
-        return user_index
+        return user_index if user_index <= queue - 1 else -1
 
 
 # --- Получение и изменение ID поледнего вопроса в ленте --- #
