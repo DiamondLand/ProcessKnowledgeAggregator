@@ -1,2 +1,2 @@
-# ProcessKnowledgeAggregator
- Telegram bot for hackathon CodeRock2024
+# Telegram-bot "агрегатор знаний"
+ Телеграм бот, созданный в рамках хакатона CodeRock2024
